@@ -72,13 +72,6 @@ export function Navbar() {
             >
               Portfolio
             </a>
-            <a
-              href="#contact"
-              onClick={(e) => handleSmoothScroll(e, 'contact')}
-              className="text-white hover:text-blue-400 transition-colors cursor-pointer"
-            >
-              Contact
-            </a>
             <Link
               href="/courses"
               className="text-white hover:text-blue-400 transition-colors"

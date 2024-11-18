@@ -14,8 +14,8 @@ export default function LandingPage() {
       <main className="pt-16">
         <HeroSection />
         <ServicesSection />
-        <AboutSection />
         <PortfolioSection />
+        <AboutSection />
         <ContactSection />
       </main>
       <footer className="bg-gray-900 py-8">
