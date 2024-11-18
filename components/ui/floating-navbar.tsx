@@ -7,16 +7,13 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 import { cn } from "@/lib/utils";
+import type { NavItem } from "@/data/nav-items";
 
 export const FloatingNav = ({
   navItems,
   className,
 }: {
-  navItems: {
-    name: string;
-    link: string;
-    icon?: JSX.Element;
-  }[];
+  navItems: NavItem[];
   className?: string;
 }) => {
   const { scrollYProgress } = useScroll();
@@ -75,21 +72,24 @@ export const FloatingNav = ({
           className
         )}
       >
-        {navItems.map((navItem, idx) => (
-          <a
-            key={`link-${idx}`}
-            href={navItem.link}
-            onClick={(e) => handleSmoothScroll(e, navItem.link)}
-            className={cn(
-              "relative text-neutral-50 items-center flex space-x-1 hover:text-blue-400 transition-colors"
-            )}
-          >
-            <span className="block sm:hidden">
-              {React.createElement(navItem.icon, { className: "h-4 w-4" })}
-            </span>
-            <span className="hidden sm:block text-sm">{navItem.name}</span>
-          </a>
-        ))}
+        {navItems.map((navItem, idx) => {
+          const Icon = navItem.icon;
+          return (
+            <a
+              key={`link-${idx}`}
+              href={navItem.link}
+              onClick={(e) => handleSmoothScroll(e, navItem.link)}
+              className={cn(
+                "relative text-neutral-50 items-center flex space-x-1 hover:text-blue-400 transition-colors"
+              )}
+            >
+              <span className="block sm:hidden">
+                <Icon className="h-4 w-4" />
+              </span>
+              <span className="hidden sm:block text-sm">{navItem.name}</span>
+            </a>
+          );
+        })}
         <button className="border text-sm font-medium relative border-white/[0.2] text-white px-4 py-2 rounded-full hover:bg-white/10 transition-colors">
           <span>Login</span>
           <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />

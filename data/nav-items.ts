@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
-import { Home, User, Briefcase, FolderKanban, Mail, GraduationCap, LucideIcon } from 'lucide-react'
+import { Home, User, Briefcase, FolderKanban, Mail, GraduationCap } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 export interface NavItem {
   name: string
@@ -9,11 +9,16 @@ export interface NavItem {
   icon: LucideIcon
 }
 
-export const navItems: NavItem[] = [
+export const navItems = [
   {
     name: "Home",
     link: "#",
     icon: Home,
+  },
+  {
+    name: "About",
+    link: "#about",
+    icon: User,
   },
   {
     name: "Services",
@@ -24,6 +29,11 @@ export const navItems: NavItem[] = [
     name: "Portfolio",
     link: "#portfolio",
     icon: FolderKanban,
+  },
+  {
+    name: "Contact",
+    link: "#contact",
+    icon: Mail,
   },
   {
     name: "Courses",
