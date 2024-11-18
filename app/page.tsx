@@ -1,5 +1,6 @@
 'use client'
 
+import { Navbar } from '@/components/sections/navbar'
 import { HeroSection } from '@/components/sections/hero-section'
 import { AboutSection } from '@/components/sections/about-section'
 import { ServicesSection } from '@/components/sections/services-section'
@@ -9,7 +10,8 @@ import { ContactSection } from '@/components/sections/contact-section'
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <main>
+      <Navbar />
+      <main className="pt-16">
         <HeroSection />
         <ServicesSection />
         <AboutSection />
