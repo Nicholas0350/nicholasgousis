@@ -1,45 +1,45 @@
-import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
-import { generateThreadFromContent } from '@/lib/anthropic';
-import { handlers } from '@/lib/handlers';
+// import { NextResponse } from 'next/server';
+// import { supabase } from '@/lib/supabase';
+// import { generateThreadFromContent } from '@/lib/anthropic';
+// import { handlers } from '@/lib/handlers';
 
-export async function POST(req: Request) {
-  try {
-    const { resources } = await req.json();
+// export async function POST(req: Request) {
+//   try {
+//     const { resources } = await req.json();
 
-    // Process each resource
-    const processedContent = await Promise.all(
-      resources.map(r => handlers[r.type](r.content))
-    );
+//     // Process each resource
+//     const processedContent = await Promise.all(
+//       resources.map(r => handlers[r.type](r.content))
+//     );
 
-    // Combine content
-    const combinedContent = processedContent
-      .map(r => r.content)
-      .join('\n\n');
+//     // Combine content
+//     const combinedContent = processedContent
+//       .map(r => r.content)
+//       .join('\n\n');
 
-    // Generate thread using Anthropic
-    const thread = await generateThreadFromContent(combinedContent);
+//     // Generate thread using Anthropic
+//     const thread = await generateThreadFromContent(combinedContent);
 
-    // Store in Supabase
-    const { data, error } = await supabase
-      .from('threads')
-      .insert({
-        content: thread,
-        resources: resources,
-        status: 'draft'
-      })
-      .select()
-      .single();
+//     // Store in Supabase
+//     const { data, error } = await supabase
+//       .from('threads')
+//       .insert({
+//         content: thread,
+//         resources: resources,
+//         status: 'draft'
+//       })
+//       .select()
+//       .single();
 
-    if (error) throw error;
+//     if (error) throw error;
 
-    return NextResponse.json({ thread: data });
+//     return NextResponse.json({ thread: data });
 
-  } catch (error) {
-    console.error('Error generating thread:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate thread' },
-      { status: 500 }
-    );
-  }
-}
+//   } catch (error) {
+//     console.error('Error generating thread:', error);
+//     return NextResponse.json(
+//       { error: 'Failed to generate thread' },
+//       { status: 500 }
+//     );
+//   }
+// }
