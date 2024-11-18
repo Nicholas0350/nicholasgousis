@@ -1,17 +1,18 @@
 'use client'
 
-import { Navbar } from '@/components/sections/navbar'
+import { FloatingNav } from '@/components/ui/floating-navbar'
 import { HeroSection } from '@/components/sections/hero-section'
 import { AboutSection } from '@/components/sections/about-section'
 import { ServicesSection } from '@/components/sections/services-section'
 import { PortfolioSection } from '@/components/sections/portfolio-section'
 import { ContactSection } from '@/components/sections/contact-section'
+import { navItems } from '@/data/nav-items'
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <Navbar />
-      <main className="pt-16">
+      <FloatingNav navItems={navItems} />
+      <main>
         <HeroSection />
         <ServicesSection />
         <PortfolioSection />
