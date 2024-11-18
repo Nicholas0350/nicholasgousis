@@ -1,7 +1,13 @@
-// import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 // import { supabase } from '@/lib/supabase';
 // import { generateThreadFromContent } from '@/lib/anthropic';
 // import { handlers } from '@/lib/handlers';
+
+export async function POST() {
+  return NextResponse.json({ message: "API endpoint not implemented yet" }, { status: 501 });
+}
+
+
 
 // export async function POST(req: Request) {
 //   try {
