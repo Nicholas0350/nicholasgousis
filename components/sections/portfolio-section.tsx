@@ -9,8 +9,8 @@ const portfolioItems = [
 
 export function PortfolioSection() {
   return (
-    <section id="portfolio" className="bg-gray-800 py-20">
-      <div className="container mx-auto px-4">
+    <section id="portfolio" className="min-h-screen flex items-center justify-center bg-gray-800">
+      <div className="container mx-auto px-4 py-20">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Portfolio</h2>
         <p className="text-xl mb-12 text-center max-w-2xl mx-auto">
           A glimpse into the websites and applications I have built. Each project showcases my commitment to fast, affordable, and innovative solutions.

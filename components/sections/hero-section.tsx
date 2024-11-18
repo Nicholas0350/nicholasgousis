@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 
 export function HeroSection() {
   return (
-    <section className="container mx-auto px-4 py-20 text-center">
+    <section className="min-h-screen flex items-center justify-center container mx-auto px-4 py-20 text-center">
       <motion.h1
         className="text-4xl md:text-6xl font-bold mb-6"
         initial={{ opacity: 0, y: 20 }}
