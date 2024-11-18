@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { LineChart, BarChart } from './Charts';
-import { GrowthPrediction } from '@/lib/types';
+import { LineChart } from '@/components/Charts';
+import type { GrowthPrediction, RecommendedAction } from '@/lib/types';
 
 export function GrowthMonitor({ userId }: { userId: string }) {
   const [growth, setGrowth] = useState<GrowthPrediction | null>(null);
@@ -41,7 +41,7 @@ export function GrowthMonitor({ userId }: { userId: string }) {
       <div className="mt-6">
         <h3>Recommended Actions</h3>
         <ul>
-          {growth.recommendedActions.map(action => (
+          {growth.recommendedActions.map((action: RecommendedAction) => (
             <li key={action.action} className="flex justify-between">
               <span>{action.action}</span>
               <span>Impact: {action.impact}%</span>

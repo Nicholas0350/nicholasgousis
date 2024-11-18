@@ -1,4 +1,4 @@
-interface Resource {
+export interface Resource {
   type: 'pdf' | 'markdown' | 'url';
   content: string;
   metadata?: {
@@ -8,14 +8,14 @@ interface Resource {
   };
 }
 
-interface ThreadSegment {
+export interface ThreadSegment {
   text: string;
   position: number;
   total: number;
   media?: string[];
 }
 
-interface AccountMetrics {
+export interface AccountMetrics {
   followersCount: number;
   engagementRate: number;
   postFrequency: number;
@@ -25,21 +25,24 @@ interface AccountMetrics {
   }[];
 }
 
-interface PostPerformance {
+export interface PostPerformance {
   impressions: number;
   likes: number;
   replies: number;
   reposts: number;
   engagementRate: number;
+  posted_at?: string;
 }
 
-interface GrowthPrediction {
+export interface GrowthPrediction {
   metric: string;
-  currentValue: number;
-  predictedValue: number;
+  currentValue: number[];
+  predictedValue: number[];
   confidence: number;
-  recommendedActions: {
-    action: string;
-    impact: number;
-  }[];
+  recommendedActions: RecommendedAction[];
+}
+
+export interface RecommendedAction {
+  action: string;
+  impact: number;
 }
