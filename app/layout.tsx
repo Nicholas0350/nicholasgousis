@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Nicholas Gousis",
+  title: "Nicholas Gousis | floor trader, internet biz builder, always learning. usually from my mistakes.",
   description: "Nicholas Gousis | Floor trader, interest rates trader internet biz builder, always learning. usually from my mistakes. Building a portfolio of one-person businesses to $50M",
 };
 
