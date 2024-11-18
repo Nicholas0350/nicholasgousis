@@ -11,11 +11,6 @@ export interface NavItem {
 
 export const navItems = [
   {
-    name: "Home",
-    link: "#",
-    icon: Home,
-  },
-  {
     name: "About",
     link: "#about",
     icon: User,
