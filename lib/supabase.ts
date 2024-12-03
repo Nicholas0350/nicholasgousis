@@ -3,12 +3,12 @@ import { Database } from '@/types/supabase'
 
 // Add debug logging
 console.log('Supabase URL Available:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log('Supabase Key Available:', !!process.env.SUPABASE_SERVICE_KEY);
+console.log('Supabase Key Available:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
   {
     auth: {
       autoRefreshToken: false,
