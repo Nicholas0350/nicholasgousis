@@ -48,9 +48,17 @@
 //     return NextResponse.json({ received: true });
 //   } catch (error) {
 //     console.error('Webhook error:', error);
-//     return NextResponse.json(
+//     return NextResponse.js
 //       { error: 'Webhook handler failed' },
 //       { status: 400 }
 //     );
 //   }
 // }
+
+
+export async function POST(req: Request) {
+  return new Response(JSON.stringify({ received: true }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
