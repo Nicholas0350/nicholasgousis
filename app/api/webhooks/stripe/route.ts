@@ -56,7 +56,7 @@
 // }
 
 
-export async function POST(req: Request) {
+export async function POST() {
   return new Response(JSON.stringify({ received: true }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
