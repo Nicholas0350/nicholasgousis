@@ -17,23 +17,23 @@ export function HeroSection() {
       {/* Content */}
       <div className="container mx-auto px-4 py-20 text-center relative z-10">
         <motion.h1
-          className="text-4xl md:text-6xl font-bold mb-6"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6 text-white"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Your AI-Enhanced Financial Solutions
+          Your AI-Enhanced MVP Financial Solutions Fast Compliant Affordable.
         </motion.h1>
         <motion.h2
-          className="text-2xl md:text-3xl mb-8 text-blue-400"
+          className="text-2xl md:text-3xl mb-8 text-gray-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Fast. Compliant. Innovative.
+          Fast. Compliant. Affordable
         </motion.h2>
         <motion.p
-          className="text-xl mb-12 max-w-2xl mx-auto text-gray-300"
+          className="text-xl mb-12 max-w-2xl mx-auto text-gray-400"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -48,7 +48,7 @@ export function HeroSection() {
           <Button
             asChild
             size="lg"
-            className="bg-blue-500 hover:bg-blue-600 transition-colors"
+            className="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
           >
             <a href="#contact">
               Get Started <ArrowRight className="ml-2" />
