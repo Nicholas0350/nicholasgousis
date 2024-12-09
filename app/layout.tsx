@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Nicholas Gousis | MVP agency partner for financial services.",
-  description: "Boost your financial Services MRR with effcient MVP building & regulatory compliance across ASIC(Aus), FCA(UK), SFC(Hong Kong), SEC, CFTC(USA)",
+  title: "Nicholas Gousis | MVP agency and regulatory compliance partner for financial services.",
+  description: "Our framework of MVP design combined with our regulatory compliance services across ASIC(Aus), FCA(UK), SFC(Hong Kong), SEC, CFTC(USA) speeds up your business success."
 };
 
 export default function RootLayout({
