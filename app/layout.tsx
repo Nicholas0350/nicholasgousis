@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Nicholas Gousis | floor trader, internet biz builder, always learning. usually from my mistakes.",
-  description: "Nicholas Gousis | Floor trader, interest rates trader internet biz builder, always learning. usually from my mistakes. Building a portfolio of one-person businesses to $50M",
+  title: "Nicholas Gousis | MVP agency partner for financial services.",
+  description: "Boost your financial Services MRR with effcient MVP building & regulatory compliance across ASIC(Aus), FCA(UK), SFC(Hong Kong), SEC, CFTC(USA)",
 };
 
 export default function RootLayout({
