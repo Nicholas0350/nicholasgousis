@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
 import { type PluginAPI } from "tailwindcss/types/config";
 import svgToDataUri from "mini-svg-data-uri";
+import animate from "tailwindcss-animate";
 
 const config = {
   darkMode: ["class"],
@@ -52,6 +53,28 @@ const config = {
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))'
+        },
+        tradingview: {
+          dark: {
+            bg: '#1E222D',
+            darker: '#131722',
+            border: '#2A2E39',
+            text: '#D1D4DC',
+          },
+          light: {
+            bg: '#FFFFFF',
+            border: '#E0E3EB',
+            text: '#131722',
+          },
+          primary: '#2962FF',
+          secondary: '#787B86',
+          success: '#089981',
+          danger: '#F23645',
+          hover: '#2196F3',
+          chart: {
+            grid: '#363A45',
+            axis: '#787B86',
+          }
         }
       },
       borderRadius: {
@@ -84,7 +107,7 @@ const config = {
     }
   },
   plugins: [
-    require("tailwindcss-animate"),
+    animate,
     plugin(function ({ matchUtilities, theme }: PluginAPI) {
       matchUtilities(
         {

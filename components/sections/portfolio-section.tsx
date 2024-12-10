@@ -56,10 +56,10 @@ export function PortfolioSection() {
   const [hovering, setHovering] = useState(false)
 
   return (
-    <section id="portfolio" className="min-h-screen flex items-center justify-center bg-black/75">
+    <section id="portfolio" className="min-h-screen flex items-center justify-center bg-tradingview-dark-bg">
       <div className="container mx-auto px-4 py-20">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Portfolio</h2>
-        <p className="text-xl mb-12 text-center max-w-2xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-tradingview-dark-text">Portfolio</h2>
+        <p className="text-xl mb-12 text-center max-w-2xl mx-auto text-tradingview-secondary">
           A glimpse into the websites and applications I have built. Each project showcases my commitment to fast, affordable, and innovative solutions.
         </p>
 
@@ -74,7 +74,7 @@ export function PortfolioSection() {
               className={cn(
                 "relative px-4 py-2 rounded-full",
                 "text-sm font-medium transition-colors",
-                "hover:text-white/80"
+                "text-tradingview-secondary hover:text-tradingview-primary"
               )}
               style={{
                 transformStyle: "preserve-3d",
@@ -84,10 +84,10 @@ export function PortfolioSection() {
                 <motion.div
                   layoutId="activeTab"
                   transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-                  className="absolute inset-0 bg-zinc-900/90 dark:bg-zinc-800/90 rounded-full"
+                  className="absolute inset-0 bg-tradingview-dark-darker/50 rounded-full border border-tradingview-dark-border"
                 />
               )}
-              <span className="relative block text-white/90">
+              <span className="relative block">
                 {tab.title}
               </span>
             </button>
@@ -117,13 +117,13 @@ export function PortfolioSection() {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {tab.content.map((item, index) => (
-                    <Card key={index} className="group hover:scale-105 transition-transform duration-200">
+                    <Card key={index} className="group hover:scale-105 transition-transform duration-200 bg-tradingview-dark-darker border-tradingview-dark-border hover:border-tradingview-primary/50">
                       <CardHeader>
                         <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-t-lg" />
                       </CardHeader>
                       <CardContent>
-                        <CardTitle>{item.title}</CardTitle>
-                        <CardDescription>{item.description}</CardDescription>
+                        <CardTitle className="text-tradingview-dark-text">{item.title}</CardTitle>
+                        <CardDescription className="text-tradingview-secondary">{item.description}</CardDescription>
                       </CardContent>
                     </Card>
                   ))}
