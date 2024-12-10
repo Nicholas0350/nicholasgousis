@@ -56,10 +56,10 @@ export function PortfolioSection() {
   const [hovering, setHovering] = useState(false)
 
   return (
-    <section id="portfolio" className="min-h-screen flex items-center justify-center bg-tradingview-dark-bg">
+    <section id="portfolio" className="min-h-screen flex items-center justify-center bg-tgv-dark-bg">
       <div className="container mx-auto px-4 py-20">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-tradingview-dark-text">Portfolio</h2>
-        <p className="text-xl mb-12 text-center max-w-2xl mx-auto text-tradingview-secondary">
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-tgv-dark-text">Portfolio</h2>
+        <p className="text-xl mb-12 text-center max-w-2xl mx-auto text-tgv-secondary">
           A glimpse into the websites and applications I have built. Each project showcases my commitment to fast, affordable, and innovative solutions.
         </p>
 
@@ -74,7 +74,7 @@ export function PortfolioSection() {
               className={cn(
                 "relative px-4 py-2 rounded-full",
                 "text-sm font-medium transition-colors",
-                "text-tradingview-secondary hover:text-tradingview-primary"
+                "text-tgv-secondary hover:text-tgv-primary"
               )}
               style={{
                 transformStyle: "preserve-3d",
@@ -84,7 +84,7 @@ export function PortfolioSection() {
                 <motion.div
                   layoutId="activeTab"
                   transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-                  className="absolute inset-0 bg-tradingview-dark-darker/50 rounded-full border border-tradingview-dark-border"
+                  className="absolute inset-0 bg-tgv-dark-darker/50 rounded-full border border-tgv-dark-border"
                 />
               )}
               <span className="relative block">
@@ -117,13 +117,13 @@ export function PortfolioSection() {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {tab.content.map((item, index) => (
-                    <Card key={index} className="group hover:scale-105 transition-transform duration-200 bg-tradingview-dark-darker border-tradingview-dark-border hover:border-tradingview-primary/50">
+                    <Card key={index} className="group hover:scale-105 transition-transform duration-200 bg-tgv-dark-darker border-tgv-dark-border hover:border-tgv-primary/50">
                       <CardHeader>
                         <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-t-lg" />
                       </CardHeader>
                       <CardContent>
-                        <CardTitle className="text-tradingview-dark-text">{item.title}</CardTitle>
-                        <CardDescription className="text-tradingview-secondary">{item.description}</CardDescription>
+                        <CardTitle className="text-tgv-dark-text">{item.title}</CardTitle>
+                        <CardDescription className="text-tgv-secondary">{item.description}</CardDescription>
                       </CardContent>
                     </Card>
                   ))}

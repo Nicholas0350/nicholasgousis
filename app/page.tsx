@@ -6,14 +6,9 @@ import { AboutSection } from '@/components/sections/about-section'
 import { ServicesSection } from '@/components/sections/services-section'
 import { PortfolioSection } from '@/components/sections/portfolio-section'
 import { ContactSection } from '@/components/sections/contact-section'
+import { FooterSection } from '@/components/sections/footer-section'
 import { navItems } from '@/data/nav-items'
-import { useEffect } from 'react';
-// import dynamic from 'next/dynamic'
-
-// // Dynamically import Cal component
-// const CalComponent = dynamic(() => import("@calcom/embed-react"), {
-//   ssr: false
-// })
+import { useEffect } from 'react'
 
 export default function LandingPage() {
   useEffect(() => {
@@ -42,7 +37,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-tgv-dark-darker">
       <FloatingNav navItems={navItems} />
       <main>
         <HeroSection />
@@ -50,13 +45,8 @@ export default function LandingPage() {
         <PortfolioSection />
         <AboutSection />
         <ContactSection />
-        {/* <CalComponent calLink="nicholas-30min/intro" /> */}
       </main>
-      <footer className="bg-gray-900 py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; {new Date().getFullYear()} Nicholas Gousis. All rights reserved.</p>
-        </div>
-      </footer>
+      <FooterSection />
     </div>
   )
 }

@@ -54,7 +54,7 @@ const config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))'
         },
-        tradingview: {
+        tgv: {
           dark: {
             bg: '#1E222D',
             darker: '#131722',

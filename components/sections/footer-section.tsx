@@ -1,11 +1,11 @@
 import Link from "next/link"
 import { Bot } from "lucide-react"
 
-export function Footer() {
+export function FooterSection() {
   return (
-    <footer className="w-full py-6 bg-tgv-dark-darker border-t border-tgv-dark-border">
-      <div className="container px-4 md:px-6 mx-auto max-w-7xl">
-        <div className="grid gap-8 lg:grid-cols-2">
+    <footer className="bg-tgv-dark-darker border-t border-tgv-dark-border">
+      <div className="container mx-auto px-4">
+        <div className="grid gap-8 lg:grid-cols-2 py-8">
           <div className="flex flex-col gap-4">
             <Link className="flex items-center" href="#">
               <Bot className="h-6 w-6 text-tgv-primary mr-2" />
@@ -33,6 +33,11 @@ export function Footer() {
               </ul>
             </div>
           </div>
+        </div>
+        <div className="py-4 border-t border-tgv-dark-border">
+          <p className="text-center text-sm text-tgv-secondary">
+            &copy; {new Date().getFullYear()} Nicholas Gousis. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
