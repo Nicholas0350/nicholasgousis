@@ -8,12 +8,12 @@ import { PortfolioSection } from '@/components/sections/portfolio-section'
 import { ContactSection } from '@/components/sections/contact-section'
 import { navItems } from '@/data/nav-items'
 import { useEffect } from 'react';
-import dynamic from 'next/dynamic'
+// import dynamic from 'next/dynamic'
 
-// Dynamically import Cal component
-const CalComponent = dynamic(() => import("@calcom/embed-react"), {
-  ssr: false
-})
+// // Dynamically import Cal component
+// const CalComponent = dynamic(() => import("@calcom/embed-react"), {
+//   ssr: false
+// })
 
 export default function LandingPage() {
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function LandingPage() {
         <PortfolioSection />
         <AboutSection />
         <ContactSection />
-        <CalComponent calLink="nicholas-30min/intro" />
+        {/* <CalComponent calLink="nicholas-30min/intro" /> */}
       </main>
       <footer className="bg-gray-900 py-8">
         <div className="container mx-auto px-4 text-center">
