@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, User, Briefcase, FolderKanban, Mail, GraduationCap } from 'lucide-react'
+import { User, Briefcase, FolderKanban, Mail, GraduationCap } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 export interface NavItem {

@@ -103,6 +103,34 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out'
+      },
+      fontSize: {
+        'display-1': ['6rem', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '700' }],
+        'display-2': ['4.5rem', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '700' }],
+        'h1': ['3.75rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '600' }],
+        'h2': ['3rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '600' }],
+        'h3': ['2.25rem', { lineHeight: '1.2', fontWeight: '600' }],
+        'h4': ['1.875rem', { lineHeight: '1.2', fontWeight: '500' }],
+        'body-xl': ['1.5rem', { lineHeight: '1.5', fontWeight: '400' }],
+        'body-lg': ['1.25rem', { lineHeight: '1.5', fontWeight: '400' }],
+        'body': ['1rem', { lineHeight: '1.5', fontWeight: '400' }],
+        'small': ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }],
+        'xs': ['0.75rem', { lineHeight: '1.5', fontWeight: '400' }],
+      },
+      fontFamily: {
+        sans: ['var(--font-geist-sans)'],
+        mono: ['var(--font-geist-mono)'],
+        heading: ['Space Grotesk', 'var(--font-geist-sans)'],
+      },
+      fontWeight: {
+        thin: '100',
+        light: '300',
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+        extrabold: '800',
+        black: '900',
       }
     }
   },
