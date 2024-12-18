@@ -1,4 +1,4 @@
-Project: Personal Portfolio Website
+Project: Personal Portfolio Website with Newsletter Integration
 
 Steps:
 1. Setup Next.js with Tailwind CSS (completed)
@@ -16,3 +16,11 @@ Steps:
 Responsive Design, Testing & Deployment (defined)
 Documentation and User Guides (defined)
 Feedback and Iteration (defined)
+
+Current Task: Enhancing Previous Issues Section with Newsletter Form
+- Integrate existing NewsletterSignup component into PreviousIssuesSection
+- Match styling between components
+- Maintain functionality while improving UI consistency
+- Clean up unused imports
+- Fix linter errors in resend.ts
+- Add react-email development tools

@@ -38,3 +38,6 @@ next-env.d.ts
 !.env.example
 .env*.local
 .env.vercel
+
+# Add React Email
+.react-email

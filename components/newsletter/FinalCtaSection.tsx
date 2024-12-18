@@ -1,7 +1,5 @@
 "use client"
-import { ArrowRight } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import NewsletterSignup from './newsletterForm';
 
 export function FinalCtaSection() {
   return (
@@ -16,18 +14,8 @@ export function FinalCtaSection() {
               Join 1,000+ AFSL & ACL professionals who rely on our weekly insights.
             </p>
           </div>
-          <div className="w-full max-w-sm space-y-2">
-            <form className="flex space-x-2">
-              <Input
-                className="max-w-lg flex-1"
-                placeholder="Enter your email"
-                type="email"
-              />
-              <Button type="submit">
-                Subscribe Now
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </form>
+          <div className="w-full max-w-sm">
+            <NewsletterSignup />
           </div>
         </div>
       </div>

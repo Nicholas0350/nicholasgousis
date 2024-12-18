@@ -1,10 +1,9 @@
 "use client"
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ArrowRight, CheckCircle, ChevronRight } from 'lucide-react'
+import { CheckCircle, ChevronRight } from 'lucide-react'
 import { ArticleModal } from "@/components/ArticleModal"
+import NewsletterSignup from './newsletterForm';
 
 const articles = [
   {
@@ -76,18 +75,8 @@ export function PreviousIssuesSection() {
                       ))}
                     </ul>
                   </div>
-                  <div className="mt-8 space-y-4">
-                    <form className="space-y-4">
-                      <Input
-                        className="w-full text-lg py-6"
-                        placeholder="Enter your email"
-                        type="email"
-                      />
-                      <Button className="w-full text-lg py-6" type="submit">
-                        Subscribe Now
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </Button>
-                    </form>
+                  <div className="mt-8">
+                    <NewsletterSignup />
                   </div>
                 </CardContent>
               </Card>

@@ -1,8 +1,6 @@
 "use client"
-import { ArrowRight } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import NewsletterSignup from './newsletterForm';
 
 export function HeroSection() {
   return (
@@ -20,21 +18,8 @@ export function HeroSection() {
               Weekly expert insights on ASIC regulations, risk management, and growth strategies for AFSL & ACL holders. Stay compliant, mitigate risks, and boost your bottom line.
             </p>
           </div>
-          <div className="w-full max-w-sm space-y-2">
-            <form className="flex space-x-2">
-              <Input
-                className="max-w-lg flex-1"
-                placeholder="Enter your email"
-                type="email"
-              />
-              <Button type="submit">
-                Get Compliant
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </form>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Join industry leaders staying ahead of ASIC&apos;s regulatory landscape.
-            </p>
+          <div className="w-full max-w-sm">
+            <NewsletterSignup />
           </div>
         </div>
       </div>
