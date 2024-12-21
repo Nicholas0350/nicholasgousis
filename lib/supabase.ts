@@ -3,24 +3,24 @@ import { Database } from '@/types/supabase'
 
 // Add debug logging
 console.log('Supabase URL Available:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log('Supabase Key Available:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
+console.log('Supabase Key Available:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   {
     auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-      detectSessionInUrl: false
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
     },
     db: {
       schema: 'public'
     },
     global: {
       headers: {
-        'x-my-custom-header': 'chatprd-service-role'
+        'x-my-custom-header': 'newsletter-subscriber'
       }
     }
   }
