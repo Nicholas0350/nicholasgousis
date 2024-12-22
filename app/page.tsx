@@ -12,41 +12,39 @@ import { useEffect } from 'react'
 
 export default function LandingPage() {
   useEffect(() => {
-    (async function initCal() {
-      const { getCalApi } = await import("@calcom/embed-react");
-      const api = await getCalApi();
+    ;(async function initCal() {
+      const { getCalApi } = await import('@calcom/embed-react')
+      const api = await getCalApi()
 
       try {
-        const response = await fetch('/api/cal/config');
-        const { config } = await response.json();
+        const response = await fetch('/api/cal/config')
+        const { config } = await response.json()
 
         if (api) {
-          api("floatingButton", {
-            calLink: "nicholas-30min/intro",
+          api('floatingButton', {
+            calLink: 'nicholas-30min/intro',
             config: {
               ...config,
               hideEventTypeDetails: false,
-              layout: 'month_view'
-            }
-          });
+              layout: 'month_view',
+            },
+          })
         }
       } catch (error) {
-        console.error('Failed to load calendar config:', error);
+        console.error('Failed to load calendar config:', error)
       }
-    })();
-  }, []);
+    })()
+  }, [])
 
   return (
-    <div className="min-h-screen bg-tgv-dark-darker">
+    <main>
       <FloatingNav navItems={navItems} />
-      <main>
-        <HeroSection />
-        <ServicesSection />
-        <PortfolioSection />
-        <AboutSection />
-        <ContactSection />
-      </main>
+      <HeroSection />
+      <ServicesSection />
+      <PortfolioSection />
+      <AboutSection />
+      <ContactSection />
       <FooterSection />
-    </div>
+    </main>
   )
 }

@@ -54,23 +54,23 @@ export default function NewsletterSignup() {
   }
 
   return (
-    <form action={handleSubmit} className="mt-8 space-y-4">
+    <form action={handleSubmit} className="mt-18 sm:mt-20 md:mt-24 space-y-4 max-w-md mx-auto">
       <input
         id="email"
         name="email"
         type="email"
         autoComplete="email"
         required
-        className="w-full text-lg py-6 appearance-none rounded-md px-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        className="font-heading text-[13px] sm:text-sm md:text-base w-full py-1.5 sm:py-2 md:py-3 px-3 sm:px-4 md:px-6 appearance-none rounded-full border border-gray-700 bg-[#1a1a1a] placeholder-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         placeholder="Enter your email"
       />
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full text-lg py-6 inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="font-heading font-bold text-[13px] sm:text-sm md:text-base text-white py-1.5 sm:py-2 md:py-3 px-3 sm:px-4 md:px-6 rounded-full inline-flex items-center space-x-2 border-gray-700 bg-gradient-to-r from-blue-500 to-purple-500 w-full justify-center hover:from-blue-600 hover:to-purple-600 transition-all duration-200"
       >
         {isLoading ? 'Processing...' : 'Subscribe Now - $99/month'}
-        <ArrowRight className="ml-2 h-5 w-5" />
+        <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
       </button>
       {message && (
         <p className={`mt-2 text-sm ${message.includes('error') ? 'text-red-600' : 'text-green-600'}`}>

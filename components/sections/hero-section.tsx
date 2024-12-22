@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 
 export function HeroSection() {
   return (
-    <section className="min-h-screen relative flex items-center justify-center overflow-hidden bg-stone-50">
+    <section className="min-h-screen flex items-center justify-center bg-stone-50">
       {/* Background with grid pattern and animated gradient overlay */}
       <div className="absolute inset-0 w-full h-full bg-grid-small-black/[0.18] [background-size:20px_20px]">
         {/* Radial gradient to fade edges */}
@@ -17,7 +17,7 @@ export function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-20 text-center relative z-10">
+      <div className="container mx-auto px-4 text-center relative z-10">
         <motion.h1
           className="font-heading text-[5.5rem] md:text-[10rem] font-extrabold leading-[0.82] tracking-[-0.08em] mb-6 text-[#3b59ab] max-w-[15ch] mx-auto"
           initial={{ opacity: 0, y: 20 }}
