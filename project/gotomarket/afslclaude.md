@@ -78,8 +78,11 @@ tech solution natural next step for firms who want to actively manage their cond
 
 helping firms understand their conditions and prevent issues.
 reporting on failures (revocations),
+
+
 Prevention vs Consequence Paid newsletter shows how conditions are used to prevent issues & what happens when firms fail to comply:
-create Twitter content around key levers ASIC uses for regulatory control:
+
+Twitter content around key levers ASIC uses for regulatory control
 license revocations
 
  Twitter content could focus on:
@@ -93,12 +96,10 @@ license revocations
 *   How proper compliance tech can turn a cost center into a competitive advantage
 
 
-
-
 ## license revocations
  are critical intelligence for the compliance community. The paid newsletter about license losses could be a compelling lead magnet and revenue stream, while also positioning you as someone who deeply understands the regulatory enforcement landscape.
 
-For AFSL database, potential tweet themes that could drive interest:
+Potential tweet themes to drive interest:
 
 *   Pattern analysis of why licenses get revoked (without naming specific cases yet - save those details for the paid newsletter)
 
