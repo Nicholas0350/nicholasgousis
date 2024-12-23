@@ -19,7 +19,9 @@ Enterprise Risk ROI Dashboard
 
 
 ### Enterprise Pitch Structure:
-1. Fear Opening (2 minutes): "In the last 18 months, ASIC has increased enforcement actions by 47%. The average cost? $2.1M plus reputational damage. But here's what's interesting - we've identified specific patterns that preceded each action."
+1. Fear Opening (2 minutes): 
+"In the last 18 months, ASIC has increased enforcement actions by 47%. The average cost? $2.1M plus reputational damage. But here's what's interesting - we've identified specific patterns that preceded each action."
+
 2. Proof Point (3 minutes):
     - Show real anonymized case where risk patterns appeare
     - Demonstrate how your system caught i
@@ -32,7 +34,6 @@ Enterprise Risk ROI Dashboard
     - Costs less than one compliance analyst"
 
 4.  ROI Breakdown ($200K Annual Investment):
-
 
 Direct Savings:
 - Reduced compliance headcount: $700K
