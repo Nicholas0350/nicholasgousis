@@ -48,9 +48,9 @@ ROI Pitch: "Less than the cost of one compliance officer, monitors 24/7"
 
 
 ## Firecrawl Risk Analysis Engine
-the most compelling risk factors for target customers or build out the peer comparison engine first.
-make this compelling for sales:
-create a risk scoring system from the AFSL data you already have in Supabase.
+- the most compelling risk factors for target customers or 
+- a peer comparison engine or
+- a risk scoring system from AFSL data in Supabase.
 
 ### How we to derive meaningful risk scores:
 ### License Risk Intelligence Dashboard
