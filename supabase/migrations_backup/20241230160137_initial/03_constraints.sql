@@ -1,0 +1,2 @@
+-- Copy all ALTER TABLE and constraint statements
+-- Lines 956-1032 from baseline

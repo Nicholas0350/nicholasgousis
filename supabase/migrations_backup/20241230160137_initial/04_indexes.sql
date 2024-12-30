@@ -1,0 +1,2 @@
+-- Copy all CREATE INDEX statements
+-- Lines 1034-1094 from baseline

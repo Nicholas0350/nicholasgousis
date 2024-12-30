@@ -1,0 +1,2 @@
+-- Copy all RLS policies and grants
+-- Lines 1133-1167 from baseline

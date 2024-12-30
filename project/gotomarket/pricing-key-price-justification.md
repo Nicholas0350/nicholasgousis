@@ -71,4 +71,4 @@ Key Price Justifications:
 3.  Competitive Intel:
     *   Peer insights
     *   Industry trends
-    *   Regulatory focus areas
+    *   Regulatory focus **areas**
