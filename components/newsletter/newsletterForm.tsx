@@ -61,7 +61,7 @@ export default function NewsletterSignup() {
         type="email"
         autoComplete="email"
         required
-        className="font-heading text-[13px] sm:text-sm md:text-base w-full py-1.5 sm:py-2 md:py-3 px-3 sm:px-4 md:px-6 appearance-none rounded-full border border-gray-700 bg-[#1a1a1a] placeholder-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        className="font-heading text-center text-[13px] sm:text-sm md:text-base w-full py-1.5 sm:py-2 md:py-3 px-3 sm:px-4 md:px-6 appearance-none rounded-full border border-gray-700 bg-[#1a1a1a] placeholder-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         placeholder="Enter your email"
       />
       <button

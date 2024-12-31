@@ -4,20 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, ChevronRight } from 'lucide-react'
 import { ArticleModal } from "@/components/ArticleModal"
 import NewsletterSignup from './newsletterForm';
-
-const articles = [
-  {
-    number: 52,
-    title: "ASIC's New Enforcement Strategy: What It Means for Your AFSL",
-    date: "December 1, 2024"
-  },
-  {
-    number: 51,
-    title: "Mastering AFSL Compliance: A Complete Risk Management Framework",
-    date: "November 24, 2024"
-  },
-  // Add more articles as needed...
-]
+import { articles } from "@/data/newsletter/articles"
 
 export function PreviousIssuesSection() {
   const [selectedArticle, setSelectedArticle] = useState<{
