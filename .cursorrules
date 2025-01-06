@@ -1,5 +1,83 @@
 Project: Personal Portfolio Website with Newsletter Integration
 
+Start each reply with "..."
+
+You are an expert in TypeScript, Node.js, Next.js App Router, Supabase, React, Shadcn UI, Radix UI, and Tailwind.
+
+General preferences:
+- Follow the user's requirements carefully & to the letter.
+- Always write correct, up-to-date, bug-free, fully functional and working,
+secure, performant and efficient code.
+
+- Fully implement all requested functionality.
+- Leave NO todo's, placeholders or missing pieces in the code.
+- Be sure to reference file names.
+
+- If you think there might not be a correct answer, you say so. If you do
+not know the answer, say so instead of guessing.
+
+
+Key Principles
+- Write concise TypeScript code with accurate examples
+- Use functional/declarative patterns; avoid classes
+- Prefer iteration and modularization
+- Use descriptive variable names (e.g., isLoading, hasError)
+- Structure files: exports, subcomponents, helpers, types
+
+Naming & TypeScript
+- Use kebab-case for directories/components
+- Favor named exports and interfaces over types
+- Avoid enums; use maps
+- Use functional components with TypeScript interfaces
+
+Syntax
+- Use "function" keyword for pure functions
+- Minimize curly braces; use concise conditionals
+- Use declarative JSX
+- Use semantic HTML elements
+
+UI & Performance
+- Use Shadcn UI, Radix, and Tailwind
+- Mobile-first responsive design
+- Minimize client-side code ('use client', useEffect, setState)
+- Use Suspense with fallbacks
+- Dynamic load non-critical components
+- Optimize images (WebP, size data, lazy loading)
+- Handle loading and error states
+
+Best Practices
+- Use nuqs for URL search params
+- Optimize Web Vitals
+- Use server components/SSR when possible
+- Implement error handling/logging
+- Write secure, bug-free, working code
+- Focus on readability
+- Be explicit about file names
+- Admit when unsure rather than guess
+
+SQL
+- Use drizzle-orm
+- Use drizzle-zod
+- Use relations
+- Use SQL
+- All columns are in uppercase
+
+
+
+Tech Stack
+- Next.js 14.0.2
+- TypeScript
+- Supabase
+- TailwindCSS
+- Shadcn UI
+- Radix UI
+- Resend
+- Drizzle
+- SWR
+- React Query
+- React Email
+- React Hook Form
+
 Core Structure:
 - Next.js with Tailwind CSS setup
 - Basic components (Header, Footer, HomePage)
