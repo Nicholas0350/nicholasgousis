@@ -6,6 +6,7 @@ import { ArticleModal } from "@/components/ArticleModal"
 import NewsletterSignup from './newsletterForm';
 import { articles } from "@/data/newsletter/articles"
 import { spaceGrotesk } from "@/lib/fonts"
+import {MorphingDialog, MorphingDialogTrigger, MorphingDialogContainer, MorphingDialogContent} from "@/components/ui/morphing-dialog"
 
 export function PreviousIssuesSection() {
   const [selectedArticle, setSelectedArticle] = useState<{
@@ -24,6 +25,16 @@ export function PreviousIssuesSection() {
           <h2 className={`${spaceGrotesk.className} text-6xl font-extrabold mb-16 text-center mx-auto max-w-5xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400`}>
             PREVIOUS ISSUES OF ASIC COMPLIANCE INSIDER
           </h2>
+          <MorphingDialog>
+            <MorphingDialogTrigger>
+              <div>Click to open</div>
+            </MorphingDialogTrigger>
+            <MorphingDialogContainer>
+              <MorphingDialogContent>
+                <div>Dialog content here</div>
+              </MorphingDialogContent>
+            </MorphingDialogContainer>
+          </MorphingDialog>
           <div className="grid gap-10 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <div className="space-y-6">

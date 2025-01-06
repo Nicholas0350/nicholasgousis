@@ -3,7 +3,7 @@ import { Shield } from 'lucide-react'
 
 export function NewsletterFooter() {
   return (
-    <footer className="border-t bg-gray-100 dark:bg-gray-800">
+    <footer className="w-full h-48 flex items-center justify-center border-t bg-gray-100 dark:bg-gray-800">
       <div className="container flex flex-col gap-4 px-4 py-6 md:px-6">
         <div className="flex flex-col gap-2">
           <div className="flex items-center space-x-2">
