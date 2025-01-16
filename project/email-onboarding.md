@@ -13,15 +13,25 @@ RESEND_API_KEY=re_xxxxx
 RESEND_FROM_EMAIL=newsletter@nicholasgousis.com
 
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_URL=https://chybymkpkirlyskmmxaf.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-2. Initialize Supabase types:
+2. Install Supabase client:
 ```bash
+npm install @supabase/supabase-js
+```
+
+3. Initialize Supabase types:
+```bash
+# Initialize Supabase CLI if not already done
 npx supabase init
-npx supabase link --project-ref your-project-ref
+
+# Link to your existing project
+npx supabase link --project-ref chybymkpkirlyskmmxaf
+
+# Generate TypeScript types from your database schema
 npx supabase gen types typescript --linked > lib/database.types.ts
 ```
 
