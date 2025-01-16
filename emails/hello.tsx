@@ -1,5 +1,5 @@
 import { Html, Button, Container, Section, Text, Img } from "@react-email/components";
-
+import Unsubscribe from "./unsubscribe";
 export default function Hello() {
   return (
     <Html>
@@ -36,6 +36,8 @@ export default function Hello() {
           >
             Subscribe Now
           </Button>
+
+          <Unsubscribe />
         </Section>
       </Container>
     </Html>

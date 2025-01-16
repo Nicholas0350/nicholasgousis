@@ -1,10 +1,12 @@
 import { Body, Container, Head, Html, Preview, Section, Text, Button } from "@react-email/components";
+import { Unsubscribe } from "./unsubscribe";
 
 interface EmailProps {
   url: string;
+  recipientEmail: string;
 }
 
-export function Email({ url }: EmailProps) {
+export function Email({ url, recipientEmail }: EmailProps) {
   return (
     <Html>
       <Head />
@@ -22,6 +24,7 @@ export function Email({ url }: EmailProps) {
             <Text style={text}>
               Or copy and paste this URL into your browser: {url}
             </Text>
+            <Unsubscribe email={recipientEmail} />
           </Section>
         </Container>
       </Body>

@@ -1,8 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
-import { Button } from "@/components/ui/button"
+import { StrategyCallButton } from '@/components/ui/strategy-call-button'
 
 export function HeroSection() {
   return (
@@ -46,16 +45,9 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
+          className="flex justify-center"
         >
-          <Button
-            asChild
-            size="lg"
-            className="bg-tgv-primary hover:bg-tgv-hover text-white border-none transition-colors"
-          >
-            <a href="#contact">
-              Get Started <ArrowRight className="ml-2" />
-            </a>
-          </Button>
+          <StrategyCallButton onClick={() => window.location.href = '#contact'} />
         </motion.div>
       </div>
     </section>

@@ -7,4 +7,7 @@ https://www.justinwelsh.me/
 https://x.com/audrlo
 
 
-hello world
+Dev Agencies:
+
+https://withsupafast.com/
+https://zeusinlabs.com/
