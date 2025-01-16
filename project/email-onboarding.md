@@ -6,10 +6,23 @@
 3. Wait for domain verification status to become "Verified"
 
 ## 2. Environment Configuration
-1. Add Resend API key to `.env.local`:
+1. Add Resend API key and Supabase credentials to `.env.local`:
 ```env
+# Resend
 RESEND_API_KEY=re_xxxxx
 RESEND_FROM_EMAIL=newsletter@nicholasgousis.com
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+2. Initialize Supabase types:
+```bash
+npx supabase init
+npx supabase link --project-ref your-project-ref
+npx supabase gen types typescript --linked > lib/database.types.ts
 ```
 
 ## 3. Email Template Setup
@@ -149,52 +162,73 @@ curl -v http://localhost:3002/api/newsletter
 export interface NewsletterContent {
   id: string;
   subject: string;
-  previewText: string;
+  preview_text: string;
   content: {
     intro: string;
-    mainPoints: {
+    main_points: {
       title: string;
       description: string;
     }[];
     conclusion: string;
   };
-  publishDate: Date;
+  publish_date: string;
   status: 'draft' | 'scheduled' | 'sent';
+  created_at?: string;
+  updated_at?: string;
 }
+
+export type NewsletterRow = Database['public']['Tables']['newsletter_content']['Row'];
+export type NewsletterInsert = Database['public']['Tables']['newsletter_content']['Insert'];
 ```
 
 2. Set up content storage in `lib/newsletter-content.ts`:
 ```typescript
-import { sql } from '@vercel/postgres';
-import { NewsletterContent } from '@/types/newsletter';
+import { createClient } from '@supabase/supabase-js';
+import { NewsletterContent, NewsletterInsert } from '@/types/newsletter';
 
-export async function saveNewsletter(content: NewsletterContent) {
-  return await sql`
-    INSERT INTO newsletter_content (
-      subject, preview_text, content, publish_date, status
-    ) VALUES (
-      ${content.subject},
-      ${content.previewText},
-      ${JSON.stringify(content.content)},
-      ${content.publishDate},
-      ${content.status}
-    )
-  `;
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+export async function saveNewsletter(content: Omit<NewsletterContent, 'id'>): Promise<NewsletterContent | null> {
+  const { data, error } = await supabase
+    .from('newsletter_content')
+    .insert([{
+      subject: content.subject,
+      preview_text: content.preview_text,
+      content: content.content,
+      publish_date: content.publish_date,
+      status: content.status
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error saving newsletter:', error);
+    return null;
+  }
+
+  return data;
 }
 
-export async function getScheduledNewsletter() {
-  const result = await sql`
-    SELECT * FROM newsletter_content
-    WHERE status = 'scheduled'
-    AND publish_date <= NOW()
-    ORDER BY publish_date ASC
-    LIMIT 1
-  `;
-  return result.rows[0] as NewsletterContent;
-}
-```
+export async function getScheduledNewsletter(): Promise<NewsletterContent | null> {
+  const { data, error } = await supabase
+    .from('newsletter_content')
+    .select()
+    .eq('status', 'scheduled')
+    .lte('publish_date', new Date().toISOString())
+    .order('publish_date', { ascending: true })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error('Error fetching scheduled newsletter:', error);
+    return null;
+  }
 
 3. Enhance `BroadcastTemplate` to use content in `emails/broadcast-template.tsx`:
+
 ```typescript
 interface BroadcastTemplateProps {
   content: NewsletterContent;
@@ -223,22 +257,60 @@ const BroadcastTemplate = ({ content }: BroadcastTemplateProps) => {
 
             <Text>{content.content.conclusion}</Text>
 
-            <Hr />
-            <Text style={footer}>
-              You're receiving this because you subscribed to updates.{' '}
-              <Link href="{{unsubscribeUrl}}">Unsubscribe</Link>
-            </Text>
-          </Container>
-        </Section>
-      </Body>
-    </Html>
-  );
-};
+3. Create Supabase migration in `supabase/migrations/[timestamp]_create_newsletter_content.sql`:
+```sql
+-- Create newsletter_content table
+CREATE TABLE newsletter_content (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  subject VARCHAR(255) NOT NULL,
+  preview_text VARCHAR(255) NOT NULL,
+  content JSONB NOT NULL,
+  publish_date TIMESTAMPTZ NOT NULL,
+  status VARCHAR(50) NOT NULL CHECK (status IN ('draft', 'scheduled', 'sent')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create index for querying scheduled newsletters
+CREATE INDEX idx_newsletter_content_status_publish_date
+ON newsletter_content(status, publish_date)
+WHERE status = 'scheduled';
+
+-- Create function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Create trigger to automatically update updated_at
+CREATE TRIGGER update_newsletter_content_updated_at
+  BEFORE UPDATE ON newsletter_content
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- Add RLS policies
+ALTER TABLE newsletter_content ENABLE ROW LEVEL SECURITY;
+
+-- Allow read access to authenticated users
+CREATE POLICY "Allow read access for authenticated users" ON newsletter_content
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Allow insert/update access only to service role
+CREATE POLICY "Allow insert/update for service role only" ON newsletter_content
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
 ```
 
-4. Update cron job to use content in `app/api/cron/newsletter/route.ts`:
+4. Update cron job to use Supabase in `app/api/cron/newsletter/route.ts`:
 ```typescript
-import { getScheduledNewsletter } from '@/lib/newsletter-content';
+import { getScheduledNewsletter, updateNewsletterStatus } from '@/lib/newsletter-content';
 // ... existing imports ...
 
 export async function GET() {
@@ -260,7 +332,7 @@ export async function GET() {
         headers: {
           'List-Unsubscribe': `<${DOMAIN}/unsubscribe?email=${subscriber.email}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-          'X-Entity-Ref-ID': `${new Date().getTime()}-${subscriber.id}`
+          'X-Entity-Ref-ID': `${new Date().getTime()}-${content.id}`
         }
       })
     );
@@ -268,11 +340,7 @@ export async function GET() {
     await Promise.all(emailPromises);
 
     // Update content status to sent
-    await sql`
-      UPDATE newsletter_content
-      SET status = 'sent'
-      WHERE id = ${content.id}
-    `;
+    await updateNewsletterStatus(content.id, 'sent');
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -325,7 +393,7 @@ const newContent: NewsletterContent = {
     ],
     conclusion: "Stay tuned for more updates in two weeks..."
   },
-  publishDate: new Date('2024-01-30T09:00:00Z'),
+  publish_date: new Date('2024-01-30T09:00:00Z').toISOString(),
   status: 'scheduled'
 };
 
