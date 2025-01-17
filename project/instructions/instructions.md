@@ -1,12 +1,22 @@
 # Project Overview
 
 **Goal:**
-
+- Build a newsletter and notification service paid montly ASIC regulated AFSL & ACL licenced user list of the latest changes in AFSL licensees.
 
 **Key Objectives:**
-- Build a newsletter paid montly ASIC regulated AFSL & ACL licenced subscriber list of the latest changes in AFSL licensees.
-- Information regarding changes are derived from the CRON jobs that run daily tracking changes in data.gov and asic.gov websites AFSL, ACL & licensees. endpoints and being updated in Supabase database
-
+- Users are tiered based on their subscription level.
+- Tier 1: $77/month paid monthly
+- Tier 2: $337/month paid monthly
+- Users are validated via existing tables in Supabase and linkedin auth:
+  - financial adviser
+  - financial services re4presentative
+  - credit licensee
+  - credit representative
+  - financial adviser
+  - afsl licensee
+- Tier 2 users get immediate notification and email thier license conditions and requirements of changes to changes in the tables as they are updated.
+  - Notification changes are derived from the CRON jobs that run daily tracking changes in data.gov and asic.gov websites AFSL, ACL & licensees. endpoints and being updated in Supabase database
+- The newsletter is sent out to subscribers on the 1st of each month.
 - AFSL, ACL & licensees. endpoints and being updated in Supabase database
 - The newsletter is sent out to subscribers on the 1st of each month.
 
@@ -30,29 +40,26 @@
 - Drizzle
 
 **Backend Services:**
--
--
-
+- Stripe
+- Resend
+- Supabase
 ---
 
 # Features
 
-1. **
+1. **Tier 1: $77/month paid monthly**
    - Users
    -
 
-2. **xxx**
-   -
-   -
-   -
-
-3. **Edit & Confirm Results**
-   -
-   -
-
-4. **View History**
-   -
-   -
+2. **Tier 2: $337/month paid monthly**
+   - Users
+   - immediate notification via email
+   - incoming changes to license conditions and requirements of changes to changes in the tables as they are updated.
+   - Notification changes are derived from the CRON jobs that run daily tracking changes in data.gov and asic.gov websites AFSL, ACL & licensees. endpoints and being updated in Supabase database
+   - check license conditions and requirements of changes to changes in the tables as they are updated.
+   - drafts and aritcle on the changes and how it could affect their business.
+   - make article available to me and my team to review and approve.
+   - once approved, send out newsletter on the 1st of each month.
    -
 
 ---
@@ -90,31 +97,22 @@
 **Error Handling:**
 - If API call fails, show alert: “Analysis failed. Please retry.”
 
-### 3. Edit & Confirm Results
+### 3. Edit & Confirm Subscription
 **Functional:**
 - Users can adjust:
-  - Ingredient names
-  - `total_grams` and thereby recalculate `total_calories` if needed (optional for v1)
-  - Overall `total_calories` if they feel the estimate is off
+  - Subscription level
+  - Email address
+  - Payment method
+  - Cancel subscription
+  - Change subscription level
 - After edits, tapping “Save”:
-  - Create a `Meal` entry in local database.
-  - (If applicable) POST to backend `/api/meals`.
+
 
 **Error Handling:**
 - Validation: If user enters invalid numeric input (non-numeric), show inline error.
 - If save fails (API error), show an alert and allow retry or cancel.
 
-### 4. View History
-**Functional:**
-- A top UI element to navigate dates (e.g., left/right arrows to move day by day).
-- For the selected date:
-  - Show total daily calories sum at the top.
-  - List all meals with:
-    - `meal_name`
-    - `total_calories`
-    - `time` logged.
-- Data sourced from local database:
-  - If remote sync is needed, fetch from `/api/meals?date=YYYY-MM-DD` and cache locally.
+
 
 **Non-Functional:**
 -
@@ -132,7 +130,12 @@
 **Entity:**
 - `id: UUID`
 - `date: Date` (or store as string `YYYY-MM-DD`)
--
+- `email: string`
+- `subscription_level: string`
+- `payment_method: string`
+- `canceled: boolean`
+- `created_at: Date`
+- `updated_at: Date`
 
 
 **Entity (Nested in Meal):**
