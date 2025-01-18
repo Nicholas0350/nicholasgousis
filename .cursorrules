@@ -68,6 +68,7 @@ Tech Stack
 - Next.js 14.0.2
 - TypeScript
 - Supabase
+  - Do not use auth-helpers-nextjs they are deprecated
 - TailwindCSS
 - Shadcn UI
 - Radix UI
