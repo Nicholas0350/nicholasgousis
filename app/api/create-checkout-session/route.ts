@@ -1,21 +1,13 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { createClient } from '@supabase/supabase-js';
 
 if (!process.env.STRIPE_SECRET) {
   throw new Error('STRIPE_SECRET is not set in environment variables');
 }
 
-// Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET, {
   apiVersion: '2024-11-20.acacia',
 });
-
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function POST(req: Request) {
   try {
@@ -31,9 +23,9 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log('Creating session with:', { email, priceId });
-
     try {
+      console.log('Creating Stripe session for:', email, priceId);
+      // Create Stripe checkout session
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         billing_address_collection: 'required',
@@ -45,43 +37,21 @@ export async function POST(req: Request) {
           },
         ],
         mode: 'subscription',
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/newsletter`,
+        success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/newsletter`,
         metadata: {
           email,
+          tier: 'tier_1',
+          price_id: priceId,
+          version: '2', // To track which version of the checkout flow was used
         },
       });
-
-      // Store user in Supabase
-      console.log('Attempting to store user in Supabase:', { email });
-
-      const { data, error: supabaseError } = await supabase
-        .from('users')
-        .upsert([
-          {
-            email,
-            stripe_customer_id: session.customer,
-            subscription_status: 'pending',
-            created_at: new Date().toISOString(),
-          }
-        ])
-        .select();
-
-      if (supabaseError) {
-        console.error('Supabase error:', {
-          error: supabaseError,
-          details: supabaseError.details,
-          message: supabaseError.message,
-          hint: supabaseError.hint
-        });
-      } else {
-        console.log('Successfully stored user in Supabase:', data);
-      }
 
       return new NextResponse(
         JSON.stringify({
           sessionId: session.id,
-          url: session.url
+          url: session.url,
+          isTestMode: process.env.NODE_ENV !== 'production'
         }),
         {
           status: 200,
@@ -91,18 +61,27 @@ export async function POST(req: Request) {
 
     } catch (stripeError) {
       console.error('Stripe session creation error:', stripeError);
-      throw stripeError;
+      return new NextResponse(
+        JSON.stringify({
+          error: 'Failed to create checkout session',
+          details: stripeError instanceof Error ? stripeError.message : String(stripeError)
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
     }
 
   } catch (error) {
-    console.error('Full error details:', error);
+    console.error('Request processing error:', error);
     return new NextResponse(
       JSON.stringify({
-        error: 'Failed to create checkout session',
+        error: 'Invalid request',
         details: error instanceof Error ? error.message : String(error)
       }),
       {
-        status: 500,
+        status: 400,
         headers: { 'Content-Type': 'application/json' }
       }
     );

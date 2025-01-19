@@ -3,7 +3,12 @@ import { Badge } from "@/components/ui/badge"
 import NewsletterSignup from './newsletterForm';
 import { motion } from 'framer-motion'
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onSubscribe: (email: string) => Promise<void>;
+  isLoading: boolean;
+}
+
+export function HeroSection({ onSubscribe, isLoading }: HeroSectionProps) {
   return (
     <section className="h-screen w-screen relative flex flex-col items-center justify-center bg-[#1a1a1a]">
       {/* Background with grid pattern and animated gradient overlay */}
@@ -49,7 +54,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="w-full max-w-sm mx-auto"
           >
-            <NewsletterSignup />
+            <NewsletterSignup onSubmit={onSubscribe} isLoading={isLoading} />
           </motion.div>
         </motion.div>
       </div>

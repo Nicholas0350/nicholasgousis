@@ -37,6 +37,8 @@
 **Networking:**
 **Database:**
 - Supabase (postgres) already installed
+- Supabase Auth (auth.users)
+  - Do not use auth-helpers-nextjs they are deprecated
 - Drizzle
 
 **Backend Services:**
@@ -49,10 +51,11 @@
 
 1. **Tier 1: $77/month paid monthly**
    - Users
-   -
+   - immediate notification via email
 
 2. **Tier 2: $337/month paid monthly**
    - Users
+   -
    - immediate notification via email
    - incoming changes to license conditions and requirements of changes to changes in the tables as they are updated.
    - Notification changes are derived from the CRON jobs that run daily tracking changes in data.gov and asic.gov websites AFSL, ACL & licensees. endpoints and being updated in Supabase database
@@ -68,7 +71,7 @@
 
 ### 1.
 **Functional:**
--
+
 -
 -
 
@@ -172,8 +175,13 @@
           }
         },
         {
-          "type": "text",
-          "text": ""
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
         }
       ]
     },
