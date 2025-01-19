@@ -6,8 +6,26 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { WelcomeEmail } from '@/emails/welcome';
 import crypto from 'crypto';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET || '', { apiVersion: '2024-11-20.acacia' });
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Check required environment variables
+if (!process.env.STRIPE_SECRET) {
+  throw new Error('Missing STRIPE_SECRET');
+}
+
+if (!process.env.STRIPE_WEBHOOK_SECRET) {
+  throw new Error('Missing STRIPE_WEBHOOK_SECRET');
+}
+
+if (!process.env.RESEND_API_KEY) {
+  throw new Error('Missing RESEND_API_KEY');
+}
+
+if (!process.env.RESEND_FROM_EMAIL) {
+  throw new Error('Missing RESEND_FROM_EMAIL');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET as string, { apiVersion: '2024-11-20.acacia' });
+const resend = new Resend(process.env.RESEND_API_KEY as string);
+const fromEmail = process.env.RESEND_FROM_EMAIL as string;
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -19,10 +37,11 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET || ''
+      process.env.STRIPE_WEBHOOK_SECRET as string
     );
   } catch (error) {
-    console.error('Error verifying webhook signature:', error);
+    const err = error as Error;
+    console.error('Error verifying webhook signature:', err.message);
     return new Response('Invalid signature', { status: 400 });
   }
 
@@ -32,16 +51,23 @@ export async function POST(req: NextRequest) {
     const customer_id = session.customer as string;
 
     if (!email) {
-      console.error('No email found in session:', session);
+      console.error('No email found in session:', JSON.stringify(session, null, 2));
       return new Response('No email found in session', { status: 400 });
     }
 
     try {
       // Check if user already exists
-      const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+      const { data: existingUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+
+      if (listError) {
+        console.error('Error listing users:', listError);
+        return new Response('Error checking existing users', { status: 500 });
+      }
+
       const existingUser = existingUsers.users.find(u => u.email === email);
 
       if (!existingUser) {
+        console.log('Creating new user:', email);
         // Create new user with random password and email confirmed
         const password = crypto.randomBytes(32).toString('hex');
         const { error: createUserError } = await supabaseAdmin.auth.admin.createUser({
@@ -61,23 +87,30 @@ export async function POST(req: NextRequest) {
           return new Response('Error creating user', { status: 500 });
         }
 
+        console.log('Successfully created user:', email);
+
         // Send welcome email
         try {
           await resend.emails.send({
-            from: process.env.RESEND_FROM_EMAIL || '',
+            from: fromEmail,
             to: email,
             subject: 'Welcome to Nicholas Gousis Financial Services!',
             react: WelcomeEmail({ email })
           });
+          console.log('Successfully sent welcome email to:', email);
         } catch (emailError) {
-          console.error('Error sending welcome email:', emailError);
+          const err = emailError as Error;
+          console.error('Error sending welcome email:', err.message);
           // Don't fail the webhook if email fails
         }
+      } else {
+        console.log('User already exists:', email);
       }
 
       return new Response(JSON.stringify({ received: true }), { status: 200 });
     } catch (error) {
-      console.error('Error processing webhook:', error);
+      const err = error as Error;
+      console.error('Error processing webhook:', err.message);
       return new Response('Error processing webhook', { status: 500 });
     }
   }
