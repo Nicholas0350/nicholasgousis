@@ -1,5 +1,5 @@
 "use client"
-import NewsletterSignup from './newsletterForm';
+// import NewsletterSignup from './newsletterForm';
 
 export function FinalCtaSection() {
   return (
@@ -15,7 +15,7 @@ export function FinalCtaSection() {
             </p>
           </div>
           <div className="w-full max-w-md">
-            <NewsletterSignup />
+            {/* <NewsletterSignup /> */}
           </div>
         </div>
       </div>
