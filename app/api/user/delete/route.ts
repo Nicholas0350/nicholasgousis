@@ -1,7 +1,7 @@
 // import { deleteUser } from '@/lib/supabase-admin';
 import { NextResponse } from 'next/server';
 
-export async function DELETE(req: Request) {
+export async function DELETE(/* req: Request */) {
   try {
     // Temporarily disabled for production
     /*

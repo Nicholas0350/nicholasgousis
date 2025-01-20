@@ -1,16 +1,16 @@
 // import { softDeleteUser } from '@/lib/supabase-admin';
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
+// import Stripe from 'stripe';
 
 if (!process.env.STRIPE_SECRET) {
   throw new Error('STRIPE_SECRET is not set in environment variables');
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET, {
-  apiVersion: '2024-11-20.acacia',
-});
+// const stripe = new Stripe(process.env.STRIPE_SECRET, {
+//   apiVersion: '2024-11-20.acacia',
+// });
 
-export async function POST(req: Request) {
+export async function POST(/* req: Request */) {
   try {
     // Temporarily disabled for production
     /*
