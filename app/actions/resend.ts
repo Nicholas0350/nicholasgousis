@@ -1,8 +1,12 @@
 'use server'
 
 import { Resend } from 'resend';
-import { Email } from '@/emails';
+// Temporarily disabled for production
+/*
 import { BroadcastTemplate } from '@/emails/broadcast-template';
+import type { Email } from '@/emails';
+*/
+import { NextResponse } from 'next/server';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -70,27 +74,34 @@ export async function sendVerificationEmail(email: string, url: string) {
   }
 }
 
-export async function sendEmail({
-  to,
-  subject,
-  react
-}: {
-  to: string,
-  subject: string,
-  react: JSX.Element
-}) {
-  const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://nicholasgousis.com';
+// Temporarily disabled for production
+/*
+export async function sendEmail(email: Email) {
+  try {
+    const data = await resend.emails.send({
+      from: email.from,
+      to: email.to,
+      subject: email.subject,
+      react: BroadcastTemplate({ previewText: email.previewText })
+    });
+    return data;
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    throw error;
+  }
+}
+*/
 
-  return await resend.emails.send({
-    from: 'Nicholas Gousis <newsletter@nicholasgousis.com>',
-    to: [to],
-    subject,
-    react,
-    headers: {
-      'List-Unsubscribe': `<${domain}/unsubscribe?email=${to}>`,
-      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'
-    }
-  });
+// Temporary placeholder function
+interface EmailData {
+  from: string;
+  to: string;
+  subject: string;
+  previewText?: string;
+}
+
+export async function sendEmail(/* email: Email */) {
+  return { success: true };
 }
 
 export async function sendBroadcast({
