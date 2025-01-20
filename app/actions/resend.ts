@@ -50,9 +50,9 @@ export async function sendVerificationEmail(email: string, url: string) {
   }
 
   try {
-    const TO_EMAIL = process.env.NODE_ENV === 'development'
-      ? 'delivered@resend.dev'
-      : email;
+    // const TO_EMAIL = process.env.NODE_ENV === 'development'
+    //   ? 'delivered@resend.dev'
+    //   : email;
 
     // Temporarily disabled for production
     /*
