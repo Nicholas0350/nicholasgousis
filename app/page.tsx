@@ -1,5 +1,5 @@
 'use client'
-
+// these will be imported later
 // import { FloatingNav } from '@/components/ui/floating-navbar'
 // import { AboutSection } from '@/components/sections/about-section'
 // import { ServicesSection } from '@/components/sections/services-section'
