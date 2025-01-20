@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CheckCircle, XCircle } from 'lucide-react'
 
-export default function SuccessPage() {
+function SuccessPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
@@ -92,5 +92,13 @@ export default function SuccessPage() {
         <p className="text-sm text-gray-500">Ανακατεύθυνση στον πίνακα ελέγχου...</p>
       </div>
     </div>
+  )
+}
+
+export default function SuccessPageWrapper() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SuccessPage />
+    </Suspense>
   )
 }
