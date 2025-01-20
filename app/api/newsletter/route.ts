@@ -5,7 +5,7 @@ import BroadcastTemplate from '@/emails/broadcast-template';
 const resend = new Resend(process.env.RESEND_API_KEY);
 const DOMAIN = 'https://nicholasgousis.com';
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const data = await resend.emails.send({
       from: `Nicholas Gousis <${process.env.RESEND_FROM_EMAIL}>`,

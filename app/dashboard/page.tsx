@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { User } from '@supabase/supabase-js'
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { Bot } from "lucide-react"
 import { useRouter } from 'next/navigation'
 

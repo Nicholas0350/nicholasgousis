@@ -43,7 +43,7 @@ export default function UnsubscribePage() {
         <CardHeader>
           <CardTitle>Unsubscribe from Newsletter</CardTitle>
           <CardDescription>
-            We're sorry to see you go. You can always subscribe again in the future.
+            We&apos;re sorry to see you go. You can always subscribe again in the future.
           </CardDescription>
         </CardHeader>
         <CardContent>
