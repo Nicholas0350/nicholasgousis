@@ -6,7 +6,6 @@ import { Resend } from 'resend';
 import { BroadcastTemplate } from '@/emails/broadcast-template';
 import type { Email } from '@/emails';
 */
-import { NextResponse } from 'next/server';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -97,12 +96,14 @@ export async function sendEmail(email: Email) {
 */
 
 // Temporary placeholder function
+/*
 interface EmailData {
   from: string;
   to: string;
   subject: string;
   previewText?: string;
 }
+*/
 
 export async function sendEmail() {
   return { success: true };
