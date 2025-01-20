@@ -104,7 +104,24 @@ export async function POST(req: NextRequest) {
           // Don't fail the webhook if email fails
         }
       } else {
-        console.log('User already exists:', email);
+        console.log('Updating existing user:', email);
+        // Update existing user's metadata
+        const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+          user_metadata: {
+            ...existingUser.user_metadata,
+            stripe_customer_id: customer_id,
+            subscription_status: 'active',
+            subscription_tier: 'tier_1',
+            updated_at: new Date().toISOString()
+          }
+        });
+
+        if (updateError) {
+          console.error('Error updating user:', updateError);
+          return new Response('Error updating user', { status: 500 });
+        }
+
+        console.log('Successfully updated user:', email);
       }
 
       return new Response(JSON.stringify({ received: true }), { status: 200 });
