@@ -14,11 +14,11 @@ export async function POST(req: Request) {
 
     // Insert user into Supabase
     const { data, error } = await supabase
-      .from('users')
+      .from('user')
       .insert([
         {
           email,
-          payment_id,
+          stripe_customer_id: payment_id,
           subscription_status,
           created_at: new Date().toISOString(),
           subscription_end_date: new Date(
