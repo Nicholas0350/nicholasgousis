@@ -38,13 +38,13 @@ export default function LandingPage() {
 
   return (
     <main>
-      <FloatingNav navItems={navItems} />
+      {/* <FloatingNav navItems={navItems} /> */}
       <HeroSection />
-      <ServicesSection />
+      {/* <ServicesSection />
       <PortfolioSection />
       <AboutSection />
       <ContactSection />
-      <FooterSection />
+      <FooterSection /> */}
     </main>
   )
 }
