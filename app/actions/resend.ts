@@ -55,6 +55,8 @@ export async function sendVerificationEmail(email: string, url: string) {
       ? 'delivered@resend.dev'
       : email;
 
+    // Temporarily disabled for production
+    /*
     const data = await resend.emails.send({
       from: FROM_EMAIL,
       to: TO_EMAIL,
@@ -68,6 +70,8 @@ export async function sendVerificationEmail(email: string, url: string) {
 
     console.log('Email sent successfully:', data);
     return { success: true, data };
+    */
+    return { success: true };
   } catch (error) {
     console.error('Error sending verification email:', error);
     return { error: 'Failed to send verification email' };
@@ -100,10 +104,12 @@ interface EmailData {
   previewText?: string;
 }
 
-export async function sendEmail(/* email: Email */) {
+export async function sendEmail() {
   return { success: true };
 }
 
+// Temporarily disabled for production
+/*
 export async function sendBroadcast({
   subject,
   content,
@@ -131,3 +137,4 @@ export async function sendBroadcast({
     return { error: 'Failed to send broadcast' };
   }
 }
+*/
