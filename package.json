@@ -12,7 +12,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.14.1",
     "@calcom/embed-react": "^1.5.2",
-    "@mendable/firecrawl-js": "^1.10.0",
+    "@mendable/firecrawl-js": "^0.0.13",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.4",
     "@radix-ui/react-checkbox": "^1.1.3",
@@ -32,7 +32,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.15.0",
     "jsonwebtoken": "^9.0.2",
-    "langchain": "^0.1.25",
+    "langchain": "^0.1.37",
     "loops": "^3.4.0",
     "lucide-react": "^0.456.0",
     "marked": "^12.0.0",
