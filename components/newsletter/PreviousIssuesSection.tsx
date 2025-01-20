@@ -3,7 +3,7 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, ChevronRight } from 'lucide-react'
 import { ArticleModal } from "@/components/ArticleModal"
-import NewsletterSignup from './newsletterForm';
+// import NewsletterSignup from './newsletterForm';
 import { articles } from "@/data/newsletter/articles"
 import { spaceGrotesk } from "@/lib/fonts"
 import {MorphingDialog, MorphingDialogTrigger, MorphingDialogContainer, MorphingDialogContent} from "@/components/ui/morphing-dialog"
@@ -78,7 +78,7 @@ export function PreviousIssuesSection() {
                     </ul>
                   </div>
                   <div className="mt-8">
-                    <NewsletterSignup />
+                    {/* <NewsletterSignup /> */}
                   </div>
                 </CardContent>
               </Card>
