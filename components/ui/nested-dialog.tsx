@@ -76,6 +76,8 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
 function InnerDialog({ children }: { children: React.ReactNode }) {
   const context = React.useContext(DialogContext);
   if (!context) throw new Error("InnerDialog must be used within a Dialog");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // TODO: Temporary fix - remove comment and properly handle context dependency when nested dialog is reactivated
   React.useEffect(() => {
     const handleEscapeKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && context.innerOpen) {
@@ -87,7 +89,7 @@ function InnerDialog({ children }: { children: React.ReactNode }) {
     return () => {
       document.removeEventListener("keydown", handleEscapeKeyDown);
     };
-  }, [context.innerOpen, context.setInnerOpen]);
+  }, [context]);
   return (
     <DialogPrimitive.Root
       open={context.innerOpen}

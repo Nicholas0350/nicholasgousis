@@ -29,7 +29,8 @@ export const supabaseAdmin = createClient<Database>(
 // Test database connection
 export async function testConnection() {
   try {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    // TODO: Restore user destructuring when auth functionality is reactivated
+    const { error } = await supabase.auth.getUser();
     if (error) throw error;
     console.log('Database connection successful');
     return true;
