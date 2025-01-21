@@ -41,3 +41,4 @@ next-env.d.ts
 
 # Add React Email
 .react-email
+.vercel

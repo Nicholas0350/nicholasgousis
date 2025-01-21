@@ -1,7 +1,7 @@
 # Project Overview
 
 **Goal:**
-- Build a newsletter and notification service paid montly ASIC regulated AFSL & ACL licenced user list of the latest changes in AFSL licensees.
+- Build a newsletter and notification service paid monthly ASIC regulated AFSL & ACL licenced user list of the latest changes in AFSL licensees.
 
 **Key Objectives:**
 - Users are tiered based on their subscription level.
