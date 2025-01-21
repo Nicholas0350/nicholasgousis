@@ -12,16 +12,24 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 
-CREATE SCHEMA IF NOT EXISTS "basejump";
+CREATE EXTENSION IF NOT EXISTS "pg_cron" WITH SCHEMA "pg_catalog";
 
 
-ALTER SCHEMA "basejump" OWNER TO "postgres";
+
+
 
 
 CREATE SCHEMA IF NOT EXISTS "drizzle";
 
 
 ALTER SCHEMA "drizzle" OWNER TO "postgres";
+
+
+CREATE EXTENSION IF NOT EXISTS "pg_net" WITH SCHEMA "extensions";
+
+
+
+
 
 
 CREATE EXTENSION IF NOT EXISTS "pgsodium" WITH SCHEMA "pgsodium";
@@ -75,258 +83,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
 
 
 
-
-
-CREATE TYPE "basejump"."account_role" AS ENUM (
-    'owner',
-    'member'
-);
-
-
-ALTER TYPE "basejump"."account_role" OWNER TO "postgres";
-
-
-CREATE TYPE "basejump"."invitation_type" AS ENUM (
-    'one_time',
-    '24_hour'
-);
-
-
-ALTER TYPE "basejump"."invitation_type" OWNER TO "postgres";
-
-
-CREATE TYPE "basejump"."subscription_status" AS ENUM (
-    'trialing',
-    'active',
-    'canceled',
-    'incomplete',
-    'incomplete_expired',
-    'past_due',
-    'unpaid'
-);
-
-
-ALTER TYPE "basejump"."subscription_status" OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."add_current_user_to_new_account"() RETURNS "trigger"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO 'public'
-    AS $$
-begin
-    if new.primary_owner_user_id = auth.uid() then
-        insert into basejump.account_user (account_id, user_id, account_role)
-        values (NEW.id, auth.uid(), 'owner');
-    end if;
-    return NEW;
-end;
-$$;
-
-
-ALTER FUNCTION "basejump"."add_current_user_to_new_account"() OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."generate_token"("length" integer) RETURNS "text"
-    LANGUAGE "sql"
-    AS $$
-select regexp_replace(replace(
-                              replace(replace(replace(encode(gen_random_bytes(length)::bytea, 'base64'), '/', ''), '+',
-                                              ''), '\', ''),
-                              '=',
-                              ''), E'[\\n\\r]+', '', 'g');
-$$;
-
-
-ALTER FUNCTION "basejump"."generate_token"("length" integer) OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."get_accounts_with_role"("passed_in_role" "basejump"."account_role" DEFAULT NULL::"basejump"."account_role") RETURNS SETOF "uuid"
-    LANGUAGE "sql" SECURITY DEFINER
-    SET "search_path" TO 'public'
-    AS $$
-select account_id
-from basejump.account_user wu
-where wu.user_id = auth.uid()
-  and (
-            wu.account_role = passed_in_role
-        or passed_in_role is null
-    );
-$$;
-
-
-ALTER FUNCTION "basejump"."get_accounts_with_role"("passed_in_role" "basejump"."account_role") OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."get_config"() RETURNS "json"
-    LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    result RECORD;
-BEGIN
-    SELECT * from basejump.config limit 1 into result;
-    return row_to_json(result);
-END;
-$$;
-
-
-ALTER FUNCTION "basejump"."get_config"() OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."has_role_on_account"("account_id" "uuid", "account_role" "basejump"."account_role" DEFAULT NULL::"basejump"."account_role") RETURNS boolean
-    LANGUAGE "sql" SECURITY DEFINER
-    SET "search_path" TO 'public'
-    AS $$
-select exists(
-               select 1
-               from basejump.account_user wu
-               where wu.user_id = auth.uid()
-                 and wu.account_id = has_role_on_account.account_id
-                 and (
-                           wu.account_role = has_role_on_account.account_role
-                       or has_role_on_account.account_role is null
-                   )
-           );
-$$;
-
-
-ALTER FUNCTION "basejump"."has_role_on_account"("account_id" "uuid", "account_role" "basejump"."account_role") OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."is_set"("field_name" "text") RETURNS boolean
-    LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-    result BOOLEAN;
-BEGIN
-    execute format('select %I from basejump.config limit 1', field_name) into result;
-    return result;
-END;
-$$;
-
-
-ALTER FUNCTION "basejump"."is_set"("field_name" "text") OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."protect_account_fields"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-    IF current_user IN ('authenticated', 'anon') THEN
-        -- these are protected fields that users are not allowed to update themselves
-        -- platform admins should be VERY careful about updating them as well.
-        if NEW.id <> OLD.id
-            OR NEW.personal_account <> OLD.personal_account
-            OR NEW.primary_owner_user_id <> OLD.primary_owner_user_id
-        THEN
-            RAISE EXCEPTION 'You do not have permission to update this field';
-        end if;
-    end if;
-
-    RETURN NEW;
-END
-$$;
-
-
-ALTER FUNCTION "basejump"."protect_account_fields"() OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."run_new_user_setup"() RETURNS "trigger"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO 'public'
-    AS $$
-declare
-    first_account_id    uuid;
-    generated_user_name text;
-begin
-
-    -- first we setup the user profile
-    -- TODO: see if we can get the user's name from the auth.users table once we learn how oauth works
-    if new.email IS NOT NULL then
-        generated_user_name := split_part(new.email, '@', 1);
-    end if;
-    -- create the new users's personal account
-    insert into basejump.accounts (name, primary_owner_user_id, personal_account, id)
-    values (generated_user_name, NEW.id, true, NEW.id)
-    returning id into first_account_id;
-
-    -- add them to the account_user table so they can act on it
-    insert into basejump.account_user (account_id, user_id, account_role)
-    values (first_account_id, NEW.id, 'owner');
-
-    return NEW;
-end;
-$$;
-
-
-ALTER FUNCTION "basejump"."run_new_user_setup"() OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."slugify_account_slug"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-    if NEW.slug is not null then
-        NEW.slug = lower(regexp_replace(NEW.slug, '[^a-zA-Z0-9-]+', '-', 'g'));
-    end if;
-
-    RETURN NEW;
-END
-$$;
-
-
-ALTER FUNCTION "basejump"."slugify_account_slug"() OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."trigger_set_invitation_details"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-    NEW.invited_by_user_id = auth.uid();
-    NEW.account_name = (select name from basejump.accounts where id = NEW.account_id);
-    RETURN NEW;
-END
-$$;
-
-
-ALTER FUNCTION "basejump"."trigger_set_invitation_details"() OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."trigger_set_timestamps"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-    if TG_OP = 'INSERT' then
-        NEW.created_at = now();
-        NEW.updated_at = now();
-    else
-        NEW.updated_at = now();
-        NEW.created_at = OLD.created_at;
-    end if;
-    RETURN NEW;
-END
-$$;
-
-
-ALTER FUNCTION "basejump"."trigger_set_timestamps"() OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "basejump"."trigger_set_user_tracking"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-    if TG_OP = 'INSERT' then
-        NEW.created_by = auth.uid();
-        NEW.updated_by = auth.uid();
-    else
-        NEW.updated_by = auth.uid();
-        NEW.created_by = OLD.created_by;
-    end if;
-    RETURN NEW;
-END
-$$;
-
-
-ALTER FUNCTION "basejump"."trigger_set_user_tracking"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."accept_invitation"("lookup_invitation_token" "text") RETURNS "jsonb"
@@ -387,24 +143,6 @@ $$;
 
 
 ALTER FUNCTION "public"."create_account"("slug" "text", "name" "text") OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "public"."create_invitation"("account_id" "uuid", "account_role" "basejump"."account_role", "invitation_type" "basejump"."invitation_type") RETURNS "json"
-    LANGUAGE "plpgsql"
-    AS $$
-declare
-    new_invitation basejump.invitations;
-begin
-    insert into basejump.invitations (account_id, account_role, invitation_type, invited_by_user_id)
-    values (account_id, account_role, invitation_type, auth.uid())
-    returning * into new_invitation;
-
-    return json_build_object('token', new_invitation.token);
-end
-$$;
-
-
-ALTER FUNCTION "public"."create_invitation"("account_id" "uuid", "account_role" "basejump"."account_role", "invitation_type" "basejump"."invitation_type") OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."current_user_account_role"("account_id" "uuid") RETURNS "jsonb"
@@ -671,6 +409,48 @@ $$;
 ALTER FUNCTION "public"."get_personal_account"() OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."handle_auth_user_update"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+BEGIN
+  UPDATE public.user
+  SET 
+    email = new.email,
+    updated_at = new.updated_at
+  WHERE auth_user_id = new.id;
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."handle_auth_user_update"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."handle_new_auth_user"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+BEGIN
+  INSERT INTO public.user (
+    auth_user_id,
+    email,
+    created_at,
+    updated_at,
+    subscription_status
+  ) VALUES (
+    new.id,
+    new.email,
+    new.created_at,
+    new.created_at,
+    'pending'
+  );
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."handle_new_auth_user"() OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."handle_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$
@@ -855,54 +635,6 @@ $$;
 ALTER FUNCTION "public"."update_account"("account_id" "uuid", "slug" "text", "name" "text", "public_metadata" "jsonb", "replace_metadata" boolean) OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."update_account_user_role"("account_id" "uuid", "user_id" "uuid", "new_account_role" "basejump"."account_role", "make_primary_owner" boolean DEFAULT false) RETURNS "void"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO 'public'
-    AS $$
-declare
-    is_account_owner         boolean;
-    is_account_primary_owner boolean;
-    changing_primary_owner   boolean;
-begin
-    -- check if the user is an owner, and if they are, allow them to update the role
-    select basejump.has_role_on_account(update_account_user_role.account_id, 'owner') into is_account_owner;
-
-    if not is_account_owner then
-        raise exception 'You must be an owner of the account to update a users role';
-    end if;
-
-    -- check if the user being changed is the primary owner, if so its not allowed
-    select primary_owner_user_id = auth.uid(), primary_owner_user_id = update_account_user_role.user_id
-    into is_account_primary_owner, changing_primary_owner
-    from basejump.accounts
-    where id = update_account_user_role.account_id;
-
-    if changing_primary_owner = true and is_account_primary_owner = false then
-        raise exception 'You must be the primary owner of the account to change the primary owner';
-    end if;
-
-    update basejump.account_user au
-    set account_role = new_account_role
-    where au.account_id = update_account_user_role.account_id
-      and au.user_id = update_account_user_role.user_id;
-
-    if make_primary_owner = true then
-        -- first we see if the current user is the owner, only they can do this
-        if is_account_primary_owner = false then
-            raise exception 'You must be the primary owner of the account to change the primary owner';
-        end if;
-
-        update basejump.accounts
-        set primary_owner_user_id = update_account_user_role.user_id
-        where id = update_account_user_role.account_id;
-    end if;
-end;
-$$;
-
-
-ALTER FUNCTION "public"."update_account_user_role"("account_id" "uuid", "user_id" "uuid", "new_account_role" "basejump"."account_role", "make_primary_owner" boolean) OWNER TO "postgres";
-
-
 CREATE OR REPLACE FUNCTION "public"."update_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$
@@ -933,99 +665,6 @@ SET default_tablespace = '';
 SET default_table_access_method = "heap";
 
 
-CREATE TABLE IF NOT EXISTS "basejump"."account_user" (
-    "user_id" "uuid" NOT NULL,
-    "account_id" "uuid" NOT NULL,
-    "account_role" "basejump"."account_role" NOT NULL
-);
-
-
-ALTER TABLE "basejump"."account_user" OWNER TO "postgres";
-
-
-CREATE TABLE IF NOT EXISTS "basejump"."accounts" (
-    "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
-    "primary_owner_user_id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
-    "name" "text",
-    "slug" "text",
-    "personal_account" boolean DEFAULT false NOT NULL,
-    "updated_at" timestamp with time zone,
-    "created_at" timestamp with time zone,
-    "created_by" "uuid",
-    "updated_by" "uuid",
-    "private_metadata" "jsonb" DEFAULT '{}'::"jsonb",
-    "public_metadata" "jsonb" DEFAULT '{}'::"jsonb",
-    CONSTRAINT "basejump_accounts_slug_null_if_personal_account_true" CHECK (((("personal_account" = true) AND ("slug" IS NULL)) OR (("personal_account" = false) AND ("slug" IS NOT NULL))))
-);
-
-
-ALTER TABLE "basejump"."accounts" OWNER TO "postgres";
-
-
-CREATE TABLE IF NOT EXISTS "basejump"."billing_customers" (
-    "account_id" "uuid" NOT NULL,
-    "id" "text" NOT NULL,
-    "email" "text",
-    "active" boolean,
-    "provider" "text"
-);
-
-
-ALTER TABLE "basejump"."billing_customers" OWNER TO "postgres";
-
-
-CREATE TABLE IF NOT EXISTS "basejump"."billing_subscriptions" (
-    "id" "text" NOT NULL,
-    "account_id" "uuid" NOT NULL,
-    "billing_customer_id" "text" NOT NULL,
-    "status" "basejump"."subscription_status",
-    "metadata" "jsonb",
-    "price_id" "text",
-    "plan_name" "text",
-    "quantity" integer,
-    "cancel_at_period_end" boolean,
-    "created" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
-    "current_period_start" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
-    "current_period_end" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
-    "ended_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()),
-    "cancel_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()),
-    "canceled_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()),
-    "trial_start" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()),
-    "trial_end" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()),
-    "provider" "text"
-);
-
-
-ALTER TABLE "basejump"."billing_subscriptions" OWNER TO "postgres";
-
-
-CREATE TABLE IF NOT EXISTS "basejump"."config" (
-    "enable_team_accounts" boolean DEFAULT true,
-    "enable_personal_account_billing" boolean DEFAULT true,
-    "enable_team_account_billing" boolean DEFAULT true,
-    "billing_provider" "text" DEFAULT 'stripe'::"text"
-);
-
-
-ALTER TABLE "basejump"."config" OWNER TO "postgres";
-
-
-CREATE TABLE IF NOT EXISTS "basejump"."invitations" (
-    "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
-    "account_role" "basejump"."account_role" NOT NULL,
-    "account_id" "uuid" NOT NULL,
-    "token" "text" DEFAULT "basejump"."generate_token"(30) NOT NULL,
-    "invited_by_user_id" "uuid" NOT NULL,
-    "account_name" "text",
-    "updated_at" timestamp with time zone,
-    "created_at" timestamp with time zone,
-    "invitation_type" "basejump"."invitation_type" NOT NULL
-);
-
-
-ALTER TABLE "basejump"."invitations" OWNER TO "postgres";
-
-
 CREATE TABLE IF NOT EXISTS "drizzle"."__drizzle_migrations" (
     "id" integer NOT NULL,
     "hash" "text" NOT NULL,
@@ -1052,24 +691,13 @@ ALTER SEQUENCE "drizzle"."__drizzle_migrations_id_seq" OWNED BY "drizzle"."__dri
 
 
 
-CREATE TABLE IF NOT EXISTS "public"."accounts" (
-    "id" bigint NOT NULL,
+CREATE TABLE IF NOT EXISTS "public"."accounts_backup" (
+    "id" bigint,
     "primary_owner_user_id" "text"
 );
 
 
-ALTER TABLE "public"."accounts" OWNER TO "postgres";
-
-
-ALTER TABLE "public"."accounts" ALTER COLUMN "id" ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME "public"."accounts_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
+ALTER TABLE "public"."accounts_backup" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."financial_services_representatives" (
@@ -1337,6 +965,20 @@ CREATE TABLE IF NOT EXISTS "public"."financial_advisers" (
 ALTER TABLE "public"."financial_advisers" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."function_logs" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "function_name" "text" NOT NULL,
+    "status" "text" NOT NULL,
+    "records_processed" integer,
+    "error_message" "text",
+    "duration_ms" integer,
+    "created_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."function_logs" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."representative_relationships" (
     "ID" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "REP_ID" integer NOT NULL,
@@ -1351,6 +993,16 @@ CREATE TABLE IF NOT EXISTS "public"."representative_relationships" (
 ALTER TABLE "public"."representative_relationships" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."stripe_webhooks" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "session_id" "text" NOT NULL,
+    "processed_at" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE "public"."stripe_webhooks" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."user" (
     "id" bigint NOT NULL,
     "created_at" timestamp with time zone NOT NULL,
@@ -1360,7 +1012,8 @@ CREATE TABLE IF NOT EXISTS "public"."user" (
     "subscription_end_date" timestamp with time zone,
     "stripe_customer_id" "text",
     "stripe_session_id" "text",
-    "updated_at" timestamp with time zone DEFAULT "now"()
+    "updated_at" timestamp with time zone DEFAULT "now"(),
+    "auth_user_id" "uuid"
 );
 
 
@@ -1390,41 +1043,6 @@ ALTER TABLE ONLY "public"."financial_services_representatives" ALTER COLUMN "ID"
 
 
 
-ALTER TABLE ONLY "basejump"."account_user"
-    ADD CONSTRAINT "account_user_pkey" PRIMARY KEY ("user_id", "account_id");
-
-
-
-ALTER TABLE ONLY "basejump"."accounts"
-    ADD CONSTRAINT "accounts_pkey" PRIMARY KEY ("id");
-
-
-
-ALTER TABLE ONLY "basejump"."accounts"
-    ADD CONSTRAINT "accounts_slug_key" UNIQUE ("slug");
-
-
-
-ALTER TABLE ONLY "basejump"."billing_customers"
-    ADD CONSTRAINT "billing_customers_pkey" PRIMARY KEY ("id");
-
-
-
-ALTER TABLE ONLY "basejump"."billing_subscriptions"
-    ADD CONSTRAINT "billing_subscriptions_pkey" PRIMARY KEY ("id");
-
-
-
-ALTER TABLE ONLY "basejump"."invitations"
-    ADD CONSTRAINT "invitations_pkey" PRIMARY KEY ("id");
-
-
-
-ALTER TABLE ONLY "basejump"."invitations"
-    ADD CONSTRAINT "invitations_token_key" UNIQUE ("token");
-
-
-
 ALTER TABLE ONLY "drizzle"."__drizzle_migrations"
     ADD CONSTRAINT "__drizzle_migrations_pkey" PRIMARY KEY ("id");
 
@@ -1432,11 +1050,6 @@ ALTER TABLE ONLY "drizzle"."__drizzle_migrations"
 
 ALTER TABLE ONLY "public"."financial_advisers"
     ADD CONSTRAINT "FINANCIAL_ADVISERS_pkey" PRIMARY KEY ("ADV_NUMBER");
-
-
-
-ALTER TABLE ONLY "public"."accounts"
-    ADD CONSTRAINT "accounts_pkey" PRIMARY KEY ("id");
 
 
 
@@ -1485,8 +1098,28 @@ ALTER TABLE ONLY "public"."financial_adviser_afs_reps"
 
 
 
+ALTER TABLE ONLY "public"."function_logs"
+    ADD CONSTRAINT "function_logs_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."representative_relationships"
     ADD CONSTRAINT "representative_relationships_pkey" PRIMARY KEY ("ID");
+
+
+
+ALTER TABLE ONLY "public"."stripe_webhooks"
+    ADD CONSTRAINT "stripe_webhooks_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."stripe_webhooks"
+    ADD CONSTRAINT "stripe_webhooks_session_id_key" UNIQUE ("session_id");
+
+
+
+ALTER TABLE ONLY "public"."user"
+    ADD CONSTRAINT "user_auth_user_id_key" UNIQUE ("auth_user_id");
 
 
 
@@ -1564,34 +1197,6 @@ CREATE INDEX "idx_rep_relationships_rep_id" ON "public"."representative_relation
 
 
 
-CREATE OR REPLACE TRIGGER "basejump_add_current_user_to_new_account" AFTER INSERT ON "basejump"."accounts" FOR EACH ROW EXECUTE FUNCTION "basejump"."add_current_user_to_new_account"();
-
-
-
-CREATE OR REPLACE TRIGGER "basejump_protect_account_fields" BEFORE UPDATE ON "basejump"."accounts" FOR EACH ROW EXECUTE FUNCTION "basejump"."protect_account_fields"();
-
-
-
-CREATE OR REPLACE TRIGGER "basejump_set_accounts_timestamp" BEFORE INSERT OR UPDATE ON "basejump"."accounts" FOR EACH ROW EXECUTE FUNCTION "basejump"."trigger_set_timestamps"();
-
-
-
-CREATE OR REPLACE TRIGGER "basejump_set_accounts_user_tracking" BEFORE INSERT OR UPDATE ON "basejump"."accounts" FOR EACH ROW EXECUTE FUNCTION "basejump"."trigger_set_user_tracking"();
-
-
-
-CREATE OR REPLACE TRIGGER "basejump_set_invitations_timestamp" BEFORE INSERT OR UPDATE ON "basejump"."invitations" FOR EACH ROW EXECUTE FUNCTION "basejump"."trigger_set_timestamps"();
-
-
-
-CREATE OR REPLACE TRIGGER "basejump_slugify_account_slug" BEFORE INSERT OR UPDATE ON "basejump"."accounts" FOR EACH ROW EXECUTE FUNCTION "basejump"."slugify_account_slug"();
-
-
-
-CREATE OR REPLACE TRIGGER "basejump_trigger_set_invitation_details" BEFORE INSERT ON "basejump"."invitations" FOR EACH ROW EXECUTE FUNCTION "basejump"."trigger_set_invitation_details"();
-
-
-
 CREATE OR REPLACE TRIGGER "handle_updated_at" BEFORE UPDATE ON "public"."banned_and_disqualified_persons" FOR EACH ROW EXECUTE FUNCTION "public"."update_updated_at"();
 
 
@@ -1612,56 +1217,6 @@ CREATE OR REPLACE TRIGGER "set_updated_at" BEFORE UPDATE ON "public"."afsl_licen
 
 
 
-ALTER TABLE ONLY "basejump"."account_user"
-    ADD CONSTRAINT "account_user_account_id_fkey" FOREIGN KEY ("account_id") REFERENCES "basejump"."accounts"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "basejump"."account_user"
-    ADD CONSTRAINT "account_user_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "basejump"."accounts"
-    ADD CONSTRAINT "accounts_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "auth"."users"("id");
-
-
-
-ALTER TABLE ONLY "basejump"."accounts"
-    ADD CONSTRAINT "accounts_primary_owner_user_id_fkey" FOREIGN KEY ("primary_owner_user_id") REFERENCES "auth"."users"("id");
-
-
-
-ALTER TABLE ONLY "basejump"."accounts"
-    ADD CONSTRAINT "accounts_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "auth"."users"("id");
-
-
-
-ALTER TABLE ONLY "basejump"."billing_customers"
-    ADD CONSTRAINT "billing_customers_account_id_fkey" FOREIGN KEY ("account_id") REFERENCES "basejump"."accounts"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "basejump"."billing_subscriptions"
-    ADD CONSTRAINT "billing_subscriptions_account_id_fkey" FOREIGN KEY ("account_id") REFERENCES "basejump"."accounts"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "basejump"."billing_subscriptions"
-    ADD CONSTRAINT "billing_subscriptions_billing_customer_id_fkey" FOREIGN KEY ("billing_customer_id") REFERENCES "basejump"."billing_customers"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "basejump"."invitations"
-    ADD CONSTRAINT "invitations_account_id_fkey" FOREIGN KEY ("account_id") REFERENCES "basejump"."accounts"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "basejump"."invitations"
-    ADD CONSTRAINT "invitations_invited_by_user_id_fkey" FOREIGN KEY ("invited_by_user_id") REFERENCES "auth"."users"("id");
-
-
-
 ALTER TABLE ONLY "public"."financial_adviser_afs_reps"
     ADD CONSTRAINT "financial_adviser_afs_reps_AFS_LIC_NUM_AFS_REP_NUM_fkey" FOREIGN KEY ("AFS_LIC_NUM", "AFS_REP_NUM") REFERENCES "public"."financial_services_representatives"("AFS_LIC_NUM", "AFS_REP_NUM") ON DELETE CASCADE;
 
@@ -1677,84 +1232,6 @@ ALTER TABLE ONLY "public"."representative_relationships"
 
 
 
-CREATE POLICY "Account users can be deleted by owners except primary account o" ON "basejump"."account_user" FOR DELETE TO "authenticated" USING ((("basejump"."has_role_on_account"("account_id", 'owner'::"basejump"."account_role") = true) AND ("user_id" <> ( SELECT "accounts"."primary_owner_user_id"
-   FROM "basejump"."accounts"
-  WHERE ("account_user"."account_id" = "accounts"."id")))));
-
-
-
-CREATE POLICY "Accounts are viewable by members" ON "basejump"."accounts" FOR SELECT TO "authenticated" USING (("basejump"."has_role_on_account"("id") = true));
-
-
-
-CREATE POLICY "Accounts are viewable by primary owner" ON "basejump"."accounts" FOR SELECT TO "authenticated" USING (("primary_owner_user_id" = "auth"."uid"()));
-
-
-
-CREATE POLICY "Accounts can be edited by owners" ON "basejump"."accounts" FOR UPDATE TO "authenticated" USING (("basejump"."has_role_on_account"("id", 'owner'::"basejump"."account_role") = true));
-
-
-
-CREATE POLICY "Basejump settings can be read by authenticated users" ON "basejump"."config" FOR SELECT TO "authenticated" USING (true);
-
-
-
-CREATE POLICY "Can only view own billing customer data." ON "basejump"."billing_customers" FOR SELECT USING (("basejump"."has_role_on_account"("account_id") = true));
-
-
-
-CREATE POLICY "Can only view own billing subscription data." ON "basejump"."billing_subscriptions" FOR SELECT USING (("basejump"."has_role_on_account"("account_id") = true));
-
-
-
-CREATE POLICY "Invitations can be created by account owners" ON "basejump"."invitations" FOR INSERT TO "authenticated" WITH CHECK ((("basejump"."is_set"('enable_team_accounts'::"text") = true) AND (( SELECT "accounts"."personal_account"
-   FROM "basejump"."accounts"
-  WHERE ("accounts"."id" = "invitations"."account_id")) = false) AND ("basejump"."has_role_on_account"("account_id", 'owner'::"basejump"."account_role") = true)));
-
-
-
-CREATE POLICY "Invitations can be deleted by account owners" ON "basejump"."invitations" FOR DELETE TO "authenticated" USING (("basejump"."has_role_on_account"("account_id", 'owner'::"basejump"."account_role") = true));
-
-
-
-CREATE POLICY "Invitations viewable by account owners" ON "basejump"."invitations" FOR SELECT TO "authenticated" USING ((("created_at" > ("now"() - '24:00:00'::interval)) AND ("basejump"."has_role_on_account"("account_id", 'owner'::"basejump"."account_role") = true)));
-
-
-
-CREATE POLICY "Team accounts can be created by any user" ON "basejump"."accounts" FOR INSERT TO "authenticated" WITH CHECK ((("basejump"."is_set"('enable_team_accounts'::"text") = true) AND ("personal_account" = false)));
-
-
-
-ALTER TABLE "basejump"."account_user" ENABLE ROW LEVEL SECURITY;
-
-
-ALTER TABLE "basejump"."accounts" ENABLE ROW LEVEL SECURITY;
-
-
-ALTER TABLE "basejump"."billing_customers" ENABLE ROW LEVEL SECURITY;
-
-
-ALTER TABLE "basejump"."billing_subscriptions" ENABLE ROW LEVEL SECURITY;
-
-
-ALTER TABLE "basejump"."config" ENABLE ROW LEVEL SECURITY;
-
-
-ALTER TABLE "basejump"."invitations" ENABLE ROW LEVEL SECURITY;
-
-
-CREATE POLICY "users can view their own account_users" ON "basejump"."account_user" FOR SELECT TO "authenticated" USING (("user_id" = "auth"."uid"()));
-
-
-
-CREATE POLICY "users can view their teammates" ON "basejump"."account_user" FOR SELECT TO "authenticated" USING (("basejump"."has_role_on_account"("account_id") = true));
-
-
-
-CREATE POLICY "Authenticated users can view accounts" ON "public"."accounts" FOR SELECT TO "authenticated" USING (true);
-
-
-
 CREATE POLICY "Authenticated users can view financial_adviser_afs_reps" ON "public"."financial_adviser_afs_reps" FOR SELECT TO "authenticated" USING (true);
 
 
@@ -1763,11 +1240,16 @@ CREATE POLICY "Authenticated users can view user" ON "public"."user" FOR SELECT 
 
 
 
+CREATE POLICY "Enable all access for service role" ON "public"."stripe_webhooks" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
 CREATE POLICY "Enable read access for all users" ON "public"."financial_services_representatives" FOR SELECT USING (true);
 
 
 
-ALTER TABLE "public"."accounts" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Enable read access for all users" ON "public"."function_logs" FOR SELECT USING (true);
+
 
 
 ALTER TABLE "public"."credit_representatives" ENABLE ROW LEVEL SECURITY;
@@ -1779,6 +1261,12 @@ ALTER TABLE "public"."financial_adviser_afs_reps" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."financial_services_representatives" ENABLE ROW LEVEL SECURITY;
 
 
+ALTER TABLE "public"."function_logs" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."stripe_webhooks" ENABLE ROW LEVEL SECURITY;
+
+
 ALTER TABLE "public"."user" ENABLE ROW LEVEL SECURITY;
 
 
@@ -1787,8 +1275,9 @@ ALTER TABLE "public"."user" ENABLE ROW LEVEL SECURITY;
 ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
 
 
-GRANT USAGE ON SCHEMA "basejump" TO "authenticated";
-GRANT USAGE ON SCHEMA "basejump" TO "service_role";
+
+
+
 
 
 
@@ -1799,57 +1288,30 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."add_current_user_to_new_account"() FROM PUBLIC;
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."generate_token"("length" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "basejump"."generate_token"("length" integer) TO "authenticated";
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."get_accounts_with_role"("passed_in_role" "basejump"."account_role") FROM PUBLIC;
-GRANT ALL ON FUNCTION "basejump"."get_accounts_with_role"("passed_in_role" "basejump"."account_role") TO "authenticated";
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."get_config"() FROM PUBLIC;
-GRANT ALL ON FUNCTION "basejump"."get_config"() TO "authenticated";
-GRANT ALL ON FUNCTION "basejump"."get_config"() TO "service_role";
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."has_role_on_account"("account_id" "uuid", "account_role" "basejump"."account_role") FROM PUBLIC;
-GRANT ALL ON FUNCTION "basejump"."has_role_on_account"("account_id" "uuid", "account_role" "basejump"."account_role") TO "authenticated";
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."is_set"("field_name" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "basejump"."is_set"("field_name" "text") TO "authenticated";
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."protect_account_fields"() FROM PUBLIC;
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."run_new_user_setup"() FROM PUBLIC;
 
 
 
-REVOKE ALL ON FUNCTION "basejump"."slugify_account_slug"() FROM PUBLIC;
-
-
-
-REVOKE ALL ON FUNCTION "basejump"."trigger_set_invitation_details"() FROM PUBLIC;
-
-
-
-REVOKE ALL ON FUNCTION "basejump"."trigger_set_timestamps"() FROM PUBLIC;
-
-
-
-REVOKE ALL ON FUNCTION "basejump"."trigger_set_user_tracking"() FROM PUBLIC;
 
 
 
@@ -2042,12 +1504,6 @@ GRANT ALL ON FUNCTION "public"."create_account"("slug" "text", "name" "text") TO
 
 
 
-REVOKE ALL ON FUNCTION "public"."create_invitation"("account_id" "uuid", "account_role" "basejump"."account_role", "invitation_type" "basejump"."invitation_type") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."create_invitation"("account_id" "uuid", "account_role" "basejump"."account_role", "invitation_type" "basejump"."invitation_type") TO "service_role";
-GRANT ALL ON FUNCTION "public"."create_invitation"("account_id" "uuid", "account_role" "basejump"."account_role", "invitation_type" "basejump"."invitation_type") TO "authenticated";
-
-
-
 REVOKE ALL ON FUNCTION "public"."current_user_account_role"("account_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."current_user_account_role"("account_id" "uuid") TO "service_role";
 GRANT ALL ON FUNCTION "public"."current_user_account_role"("account_id" "uuid") TO "authenticated";
@@ -2108,6 +1564,16 @@ GRANT ALL ON FUNCTION "public"."get_personal_account"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."handle_auth_user_update"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."handle_auth_user_update"() TO "service_role";
+
+
+
+REVOKE ALL ON FUNCTION "public"."handle_new_auth_user"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."handle_new_auth_user"() TO "service_role";
+
+
+
 REVOKE ALL ON FUNCTION "public"."handle_updated_at"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."handle_updated_at"() TO "service_role";
 
@@ -2151,12 +1617,6 @@ GRANT ALL ON FUNCTION "public"."update_account"("account_id" "uuid", "slug" "tex
 
 
 
-REVOKE ALL ON FUNCTION "public"."update_account_user_role"("account_id" "uuid", "user_id" "uuid", "new_account_role" "basejump"."account_role", "make_primary_owner" boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."update_account_user_role"("account_id" "uuid", "user_id" "uuid", "new_account_role" "basejump"."account_role", "make_primary_owner" boolean) TO "service_role";
-GRANT ALL ON FUNCTION "public"."update_account_user_role"("account_id" "uuid", "user_id" "uuid", "new_account_role" "basejump"."account_role", "make_primary_owner" boolean) TO "authenticated";
-
-
-
 REVOKE ALL ON FUNCTION "public"."update_updated_at"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."update_updated_at"() TO "service_role";
 
@@ -2167,33 +1627,6 @@ GRANT ALL ON FUNCTION "public"."update_updated_at_column"() TO "service_role";
 
 
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."account_user" TO "authenticated";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."account_user" TO "service_role";
-
-
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."accounts" TO "authenticated";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."accounts" TO "service_role";
-
-
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."billing_customers" TO "service_role";
-GRANT SELECT ON TABLE "basejump"."billing_customers" TO "authenticated";
-
-
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."billing_subscriptions" TO "service_role";
-GRANT SELECT ON TABLE "basejump"."billing_subscriptions" TO "authenticated";
-
-
-
-GRANT SELECT ON TABLE "basejump"."config" TO "authenticated";
-GRANT SELECT ON TABLE "basejump"."config" TO "service_role";
-
-
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."invitations" TO "authenticated";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."invitations" TO "service_role";
 
 
 
@@ -2212,15 +1645,12 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "basejump"."invitations" TO "service_
 
 
 
-GRANT ALL ON TABLE "public"."accounts" TO "anon";
-GRANT ALL ON TABLE "public"."accounts" TO "authenticated";
-GRANT ALL ON TABLE "public"."accounts" TO "service_role";
 
 
 
-GRANT ALL ON SEQUENCE "public"."accounts_id_seq" TO "anon";
-GRANT ALL ON SEQUENCE "public"."accounts_id_seq" TO "authenticated";
-GRANT ALL ON SEQUENCE "public"."accounts_id_seq" TO "service_role";
+GRANT ALL ON TABLE "public"."accounts_backup" TO "anon";
+GRANT ALL ON TABLE "public"."accounts_backup" TO "authenticated";
+GRANT ALL ON TABLE "public"."accounts_backup" TO "service_role";
 
 
 
@@ -2278,9 +1708,21 @@ GRANT ALL ON TABLE "public"."financial_advisers" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."function_logs" TO "anon";
+GRANT ALL ON TABLE "public"."function_logs" TO "authenticated";
+GRANT ALL ON TABLE "public"."function_logs" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."representative_relationships" TO "anon";
 GRANT ALL ON TABLE "public"."representative_relationships" TO "authenticated";
 GRANT ALL ON TABLE "public"."representative_relationships" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."stripe_webhooks" TO "anon";
+GRANT ALL ON TABLE "public"."stripe_webhooks" TO "authenticated";
+GRANT ALL ON TABLE "public"."stripe_webhooks" TO "service_role";
 
 
 
