@@ -1,4 +1,4 @@
-# Automated regulatory content generation system using Firecrawl to watch and scrape ASIC's media releases
+# ASIC Regulatory Automated Firecrawl Media Release Tracker Extractor Feature
 
 
 ## Introduction

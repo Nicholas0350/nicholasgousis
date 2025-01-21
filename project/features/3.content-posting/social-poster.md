@@ -1,4 +1,4 @@
-# Social Post Generator with Anthropic API
+# Social Post Generator
 
 ## Overview
 A feature that converts various content types (PDF, Markdown, URLs) into optimized social media threads using Claude AI, with intelligent scheduling and growth analytics.

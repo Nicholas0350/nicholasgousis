@@ -1,4 +1,4 @@
-# ASIC Regulatory Tracker Content Generation Feature
+# ASIC Regulatory Automated Firecrawl Regulatory Tracker Extractor Feature
 
 ## Overview
 Automated regulatory content generation system using Firecrawl to watch and scrape ASIC's regulatory tracker and Grok API via Vercel AI SDK for intelligent content processing.
