@@ -7,11 +7,11 @@ A feature that converts various content types (PDF, Markdown, URLs) into optimiz
 
 ### 1. Setup Dependencies
 ```bash
-npm install @anthropic-ai/sdk langchain marked cheerio twitter-api-v2 @nivo/line @nivo/bar
+npm install @deepseek/deepseek-sdk langchain marked cheerio twitter-api-v2 @nivo/line @nivo/bar
 ```
 
 ### 2. Environment Configuration
-- Add ANTHROPIC_API_KEY to .env
+- Add DEEPSEEK_API_KEY to .env
 - Configure Twitter API credentials
 - Setup Supabase connection
 
@@ -23,7 +23,7 @@ npm install @anthropic-ai/sdk langchain marked cheerio twitter-api-v2 @nivo/line
 - Add content extraction and cleaning utilities
 
 #### AI Integration
-- Setup Anthropic client
+- Setup DeepSeek
 - Implement thread generation logic
 - Add content optimization prompts
 - Handle rate limits and errors
