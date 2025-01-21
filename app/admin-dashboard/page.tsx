@@ -5,9 +5,9 @@ import { Card } from '@/components/ui/card'
 import { DataTable } from '@/components/ui/data-table'
 import { useQuery } from '@tanstack/react-query'
 import { columns } from './columns'
-import { ContentAnalytics } from './components/content-analytics'
-import { LicenseeImpact } from './components/licensee-impact'
-import { ArticleDrafts } from './components/article-drafts'
+import ContentAnalytics from './components/content-analytics'
+import LicenseeImpact from './components/licensee-impact'
+import ArticleDrafts from './components/article-drafts'
 
 export default function AdminDashboardPage() {
   const { data: mediaReleases, isLoading: mediaLoading } = useQuery({
