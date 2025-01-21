@@ -9,3 +9,6 @@
   - drafts and article for review by the user
 
 ## Implementation Steps
+
+
+### 1. Setup Dependencies

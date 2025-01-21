@@ -82,7 +82,7 @@ const BroadcastTemplate = ({ previewText = "Latest Financial Services Updates" }
 5. Multi-source verification
 
 
-## 4. API Route Setup
+## 5. API Route Setup
 1. Create `app/api/newsletter/route.ts`:
 ```typescript
 import { NextResponse } from 'next/server';
@@ -118,7 +118,7 @@ export async function GET() {
 ```
 
 
-## 5. Testing
+## 6. Testing
 1. Start development server:
 ```bash
 npm run dev
@@ -173,7 +173,7 @@ curl -v http://localhost:3002/api/newsletter
    - Check email headers for proper List-Unsubscribe configuration
    - Verify email content matches template design
 
-## 6. Implementing Fortnightly Email Cadence
+## 7. Implementing Fortnightly Email Cadence
 
 ### Content Management
 1. Create content types in `types/newsletter.ts`:
