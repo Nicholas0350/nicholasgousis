@@ -1,18 +1,20 @@
-import { pgTable, text, date, integer, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 
 export const bannedAndDisqualifiedPersons = pgTable('banned_and_disqualified_persons', {
-  id: integer('id').primaryKey(),
-  registerName: text('REGISTER_NAME'),
-  bdPerName: text('BD_PER_NAME'),
-  bdPerType: text('BD_PER_TYPE'),
+  id: uuid('ID').defaultRandom().primaryKey(),
+  registerName: text('REGISTER_NAME').notNull(),
+  bdPerName: text('BD_PER_NAME').notNull(),
+  bdPerType: text('BD_PER_TYPE').notNull()
+    .check(sql`"BD_PER_TYPE" = ANY (ARRAY['AFS Banned & Disqualified', 'Banned Futures', 'Banned Securities', 'Credit Banned & Disqualified', 'Disq. Director', 'Disqualified SMSF'])`),
   bdPerDocNum: text('BD_PER_DOC_NUM'),
-  bdPerStartDt: date('BD_PER_START_DT'),
-  bdPerEndDt: date('BD_PER_END_DT'),
-  bdPerAddLocal: text('BD_PER_ADD_LOCAL'),
-  bdPerAddState: text('BD_PER_ADD_STATE'),
-  bdPerAddPcode: text('BD_PER_ADD_PCODE'),
-  bdPerAddCou: text('BD_PER_ADD_COU'),
+  bdPerStartDt: timestamp('BD_PER_START_DT', { withTimezone: true }).notNull(),
+  bdPerEndDt: timestamp('BD_PER_END_DT', { withTimezone: true }).notNull(),
+  bdPerAddLocal: text('BD_PER_ADD_LOCAL').default('ADDRESS UNKNOWN'),
+  bdPerAddState: text('BD_PER_ADD_STATE').default('ADDRESS UNKNOWN'),
+  bdPerAddPcode: text('BD_PER_ADD_PCODE').default('ADDRESS UNKNOWN'),
+  bdPerAddCountry: text('BD_PER_ADD_COUNTRY').default('AUSTRALIA'),
   bdPerComments: text('BD_PER_COMMENTS'),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow()
+  createdAt: timestamp('CREATED_AT', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('UPDATED_AT', { withTimezone: true }).defaultNow()
 })
