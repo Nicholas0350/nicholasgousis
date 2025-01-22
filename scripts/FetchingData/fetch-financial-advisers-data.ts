@@ -1,119 +1,115 @@
 import { createClient } from '@supabase/supabase-js';
 import { config } from 'dotenv';
+import { Database } from '../../types/supabase';
 
 config();
 
-const supabase = createClient(
+const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+const FINANCIAL_ADVISERS_DATASET_URL = 'https://data.gov.au/dataset/asic-financial-advisers-register';
+
 interface FinancialAdviserResponse {
-  success: boolean;
   result: {
     records: Array<{
-      REGISTER_NAME: string;
-      ADV_NAME: string;
-      ADV_NUMBER: string;
-      ADV_ROLE: string;
-      ADV_SUB_TYPE: string | null;
-      ADV_ROLE_STATUS: string;
-      ADV_ABN: string | null;
-      ADV_FIRST_PROVIDED_ADVICE: string | null;
-      ADV_DA_START_DT: string | null;
-      ADV_DA_END_DT: string | null;
-      ADV_DA_TYPE: string | null;
-      ADV_DA_DESCRIPTION: string | null;
-      ADV_START_DT: string;
-      ADV_END_DT: string | null;
-      ADV_CPD_FAILURE_YEAR: string | null;
-      ADV_ADD_LOCAL: string | null;
-      ADV_ADD_STATE: string | null;
-      ADV_ADD_PCODE: string | null;
-      ADV_ADD_COUNTRY: string | null;
-      LICENCE_NAME: string;
-      LICENCE_NUMBER: string;
-      LICENCE_ABN: string | null;
-      LICENCE_CONTROLLED_BY: string | null;
-      REP_APPOINTED_BY: string | null;
-      REP_APPOINTED_NUM: string | null;
-      REP_APPOINTED_ABN: string | null;
-      OVERALL_REGISTRATION_STATUS: string | null;
-      REGISTRATION_STATUS_UNDER_AFSL: string | null;
-      REGISTRATION_START_DATE_UNDER_AFSL: string | null;
-      REGISTRATION_END_DATE_UNDER_AFSL: string | null;
-      QUALIFICATIONS_AND_TRAINING: string | null;
-      MEMBERSHIPS: string | null;
-      FURTHER_RESTRICTIONS: string | null;
-      ABLE_TO_PROVIDE_TFAS: string | null;
-      // Financial Product Authorizations
-      FIN: string | null;
-      FIN_CARBUNIT: string | null;
-      FIN_DEPPAY_DPNONBAS: string | null;
-      FIN_DEPPAY_DPNONCSH: string | null;
-      FIN_DERIV: string | null;
-      FIN_DERIV_DERWOOL: string | null;
-      FIN_DERIV_DERELEC: string | null;
-      FIN_DERIV_DERGRAIN: string | null;
-      FIN_FOREXCH: string | null;
-      FIN_GOVDEB: string | null;
-      FIN_LIFEPROD_LIFEINV: string | null;
-      FIN_LIFEPROD_LIFERISK: string | null;
-      FIN_LIFEPROD_LIFERISK_LIFECONS: string | null;
-      FIN_MINV_MIEXCLUDEIDPS: string | null;
-      FIN_MINV_MIINCLUDEIDPS: string | null;
-      FIN_MINV_MIIDPSONLY: string | null;
-      FIN_MINV_MIOWN: string | null;
-      FIN_MINV_MIHORSE: string | null;
-      FIN_MINV_MITIME: string | null;
-      FIN_MINV_IMIS: string | null;
-      FIN_RSA: string | null;
-      FIN_SECUR: string | null;
-      FIN_SUPER: string | null;
-      FIN_SUPER_SMSUPER: string | null;
-      FIN_SUPER_SUPERHOLD: string | null;
-      FIN_STDMARGLEND: string | null;
-      FIN_NONSTDMARGLEND: string | null;
-      FIN_AUSCARBCRDUNIT: string | null;
-      FIN_ELIGINTREMSUNIT: string | null;
-      FIN_MISFIN_MISMDA: string | null;
-      FIN_MISFIN_MISFINRP: string | null;
-      FIN_MISFIN_MISFINIP: string | null;
-      FIN_FHSANONADIDUMMY: string | null;
-      // Class of Product Advice
-      CLASSES_SECUR: string | null;
-      CLASSES_SMIS: string | null;
-      CLASSES_LIFEPROD_LIFERISK: string | null;
-      CLASSES_SUPER: string | null;
-      FIN_DERIV_LAWSECURITIES: string | null;
-      FIN_DERIV_LAWFUTURE: string | null;
-      FIN_MINV: string | null;
-      FIN_SECURALL_SECURDEBENT: string | null;
-      FIN_SECURALL: string | null;
-    }>;
-  };
-}
-
-async function fetchFinancialAdviserData(limit = 10, offset = 0): Promise<FinancialAdviserResponse> {
-  const url = new URL('https://data.gov.au/data/api/3/action/datastore_search');
-  url.searchParams.append('resource_id', '91d80440-5787-46fc-99de-0c1d93e6cc9f');
-  url.searchParams.append('limit', limit.toString());
-  url.searchParams.append('offset', offset.toString());
-
-  console.log('Fetching from:', url.toString());
-
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+      REGISTER_NAME: string
+      ADV_NAME: string
+      ADV_NUMBER: string
+      ADV_ROLE: string
+      ADV_SUB_TYPE: string | null
+      ADV_ROLE_STATUS: string
+      ADV_ABN: string | null
+      ADV_FIRST_PROVIDED_ADVICE: string | null
+      ADV_START_DT: string
+      ADV_END_DT: string | null
+      ADV_DA_START_DT: string | null
+      ADV_DA_END_DT: string | null
+      ADV_DA_TYPE: string | null
+      ADV_DA_DESCRIPTION: string | null
+      ADV_CPD_FAILURE_YEAR: string | null
+      ADV_ADD_LOCAL: string | null
+      ADV_ADD_STATE: string | null
+      ADV_ADD_PCODE: string | null
+      ADV_ADD_COUNTRY: string | null
+      LICENCE_NAME: string
+      LICENCE_NUMBER: string
+      LICENCE_ABN: string | null
+      LICENCE_CONTROLLED_BY: string | null
+      REP_APPOINTED_BY: string | null
+      REP_APPOINTED_NUM: string | null
+      REP_APPOINTED_ABN: string | null
+      OVERALL_REGISTRATION_STATUS: string
+      REGISTRATION_STATUS_UNDER_AFSL: string
+      REGISTRATION_START_DATE_UNDER_AFSL: string | null
+      REGISTRATION_END_DATE_UNDER_AFSL: string | null
+      QUALIFICATIONS_AND_TRAINING: string | null
+      MEMBERSHIPS: string | null
+      FURTHER_RESTRICTIONS: string | null
+      ABLE_TO_PROVIDE_TFAS: string | null
+      FIN: string | null
+      FIN_CARBUNIT: string | null
+      FIN_DEPPAY_DPNONBAS: string | null
+      FIN_DEPPAY_DPNONCSH: string | null
+      FIN_DERIV: string | null
+      FIN_DERIV_DERWOOL: string | null
+      FIN_DERIV_DERELEC: string | null
+      FIN_DERIV_DERGRAIN: string | null
+      FIN_FOREXCH: string | null
+      FIN_GOVDEB: string | null
+      FIN_LIFEPROD_LIFEINV: string | null
+      FIN_LIFEPROD_LIFERISK: string | null
+      FIN_LIFEPROD_LIFERISK_LIFECONS: string | null
+      FIN_MINV_MIEXCLUDEIDPS: string | null
+      FIN_MINV_MIINCLUDEIDPS: string | null
+      FIN_MINV_MIIDPSONLY: string | null
+      FIN_MINV_MIOWN: string | null
+      FIN_MINV_MIHORSE: string | null
+      FIN_MINV_MITIME: string | null
+      FIN_MINV_IMIS: string | null
+      FIN_RSA: string | null
+      FIN_SECUR: string | null
+      FIN_SUPER: string | null
+      FIN_SUPER_SMSUPER: string | null
+      FIN_SUPER_SUPERHOLD: string | null
+      FIN_STDMARGLEND: string | null
+      FIN_NONSTDMARGLEND: string | null
+      FIN_AUSCARBCRDUNIT: string | null
+      FIN_ELIGINTREMSUNIT: string | null
+      FIN_MISFIN_MISMDA: string | null
+      FIN_MISFIN_MISFINRP: string | null
+      FIN_MISFIN_MISFINIP: string | null
+      FIN_FHSANONADIDUMMY: string | null
+      CLASSES_SECUR: string | null
+      CLASSES_SMIS: string | null
+      CLASSES_LIFEPROD_LIFERISK: string | null
+      CLASSES_SUPER: string | null
+    }>
   }
-
-  const data = await response.json();
-  console.log('\nFirst record sample:', JSON.stringify(data.result.records[0], null, 2));
-
-  return data;
 }
 
-async function getAFSLLicenseeDetails(licenseNumber: string) {
+export async function fetchFinancialAdvisersData(sampleSize = 10, offset = 0): Promise<{ success: true; result: FinancialAdviserResponse } | { success: false; error: unknown }> {
+  try {
+    console.log('Starting Financial Advisers data fetch...');
+
+    const url = new URL(FINANCIAL_ADVISERS_DATASET_URL);
+    url.searchParams.append('limit', sampleSize.toString());
+    url.searchParams.append('offset', offset.toString());
+
+    const response = await fetch(url.toString());
+    if (!response.ok) throw new Error('Failed to fetch Financial Advisers data');
+
+    const data = await response.json() as FinancialAdviserResponse;
+    return { success: true, result: data };
+
+  } catch (error) {
+    console.error('Error fetching Financial Advisers data:', error);
+    return { success: false, error };
+  }
+}
+
+export async function getAFSLLicenseeDetails(licenseNumber: string) {
   const { data, error } = await supabase
     .from('afsl_licensees')
     .select('*')
@@ -206,12 +202,16 @@ function transformRecord(record: FinancialAdviserResponse['result']['records'][0
   };
 }
 
-async function importFinancialAdviserData(sampleSize = 10) {
+export async function importFinancialAdviserData(sampleSize = 10) {
   try {
     console.log(`Fetching ${sampleSize} record(s)...`);
 
-    const response = await fetchFinancialAdviserData(sampleSize, 0);
-    const records = response.result.records;
+    const response = await fetchFinancialAdvisersData(sampleSize, 0);
+    if (!response.success) {
+      throw response.error;
+    }
+
+    const { records } = response.result.result;
 
     if (records.length === 0) {
       console.log('No records found');
