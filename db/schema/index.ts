@@ -6,6 +6,7 @@ export * from './afs-licensees';
 export * from './financial-advisers';
 export * from './financial-adviser-afs-reps';
 export * from './representative-relationships';
+export * from './banned-person-relationships';
 export * from './user';
 export * from './stripe-webhooks';
 export * from './function-logs';

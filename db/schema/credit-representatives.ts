@@ -15,14 +15,15 @@ export const creditRepresentatives = pgTable('credit_representatives', {
   credRepLocality: varchar('CRED_REP_LOCALITY', { length: 255 }),
   credRepState: varchar('CRED_REP_STATE', { length: 3 }),
   credRepPcode: numeric('CRED_REP_PCODE', { precision: 4, scale: 0 }),
-  credRepEdrs: varchar('CRED_REP_EDRS', { length: 10 })
-    .check(sql`"CRED_REP_EDRS" = ANY (ARRAY['FOS', 'COSL', 'FOS:COSL', 'CIO', 'AFCA'])`),
-  credRepAuthorisations: varchar('CRED_REP_AUTHORISATIONS', { length: 255 })
-    .check(sql`"CRED_REP_AUTHORISATIONS" = ANY (ARRAY['Different to Appointing Rep', 'Different to Registrant', 'Same as Appointing Rep', 'Same as Registrant'])`),
+  credRepEdrs: varchar('CRED_REP_EDRS', { length: 10 }),
+  credRepAuthorisations: varchar('CRED_REP_AUTHORISATIONS', { length: 255 }),
   credRepCrossEndorse: varchar('CRED_REP_CROSS_ENDORSE', { length: 255 }),
   createdAt: timestamp('CREATED_AT', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('UPDATED_AT', { withTimezone: true }).defaultNow()
-})
+}, (table) => ({
+  edrsCheck: sql`check ("CRED_REP_EDRS" = ANY (ARRAY['FOS', 'COSL', 'FOS:COSL', 'CIO', 'AFCA']))`,
+  authCheck: sql`check ("CRED_REP_AUTHORISATIONS" = ANY (ARRAY['Different to Appointing Rep', 'Different to Registrant', 'Same as Appointing Rep', 'Same as Registrant']))`
+}))
 
 export const creditRepresentativesRelations = relations(creditRepresentatives, ({ one }) => ({
   licensee: one(creditLicensees, {

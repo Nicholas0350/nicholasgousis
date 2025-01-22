@@ -1,0 +1,1215 @@
+{
+  "id": "e61770a1-bef6-4302-9f83-1cbf7d4f7166",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.afs_licensees": {
+      "name": "afs_licensees",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "REGISTER_NAME": {
+          "name": "REGISTER_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_NUM": {
+          "name": "AFS_LIC_NUM",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_NAME": {
+          "name": "AFS_LIC_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_ABN": {
+          "name": "AFS_LIC_ABN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_ACN": {
+          "name": "AFS_LIC_ACN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_START_DT": {
+          "name": "AFS_LIC_START_DT",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_END_DT": {
+          "name": "AFS_LIC_END_DT",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_STATUS": {
+          "name": "AFS_LIC_STATUS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_ADD_LOC": {
+          "name": "AFS_LIC_ADD_LOC",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_ADD_STATE": {
+          "name": "AFS_LIC_ADD_STATE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_ADD_PCO": {
+          "name": "AFS_LIC_ADD_PCO",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_ADD_COU": {
+          "name": "AFS_LIC_ADD_COU",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_PRIN_BUS": {
+          "name": "AFS_LIC_PRIN_BUS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_SERV_NAME": {
+          "name": "AFS_LIC_SERV_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_REMUN_TYP": {
+          "name": "AFS_LIC_REMUN_TYP",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_LIC_EXT_DIS_RES": {
+          "name": "AFS_LIC_EXT_DIS_RES",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.banned_person_relationships": {
+      "name": "banned_person_relationships",
+      "schema": "",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "BANNED_PERSON_ID": {
+          "name": "BANNED_PERSON_ID",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ENTITY_TYPE": {
+          "name": "ENTITY_TYPE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ENTITY_ID": {
+          "name": "ENTITY_ID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "RELATIONSHIP_START_DATE": {
+          "name": "RELATIONSHIP_START_DATE",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "RELATIONSHIP_END_DATE": {
+          "name": "RELATIONSHIP_END_DATE",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CREATED_AT": {
+          "name": "CREATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "UPDATED_AT": {
+          "name": "UPDATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.banned_and_disqualified_persons": {
+      "name": "banned_and_disqualified_persons",
+      "schema": "",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "REGISTER_NAME": {
+          "name": "REGISTER_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "BD_PER_NAME": {
+          "name": "BD_PER_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "BD_PER_TYPE": {
+          "name": "BD_PER_TYPE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "BD_PER_DOC_NUM": {
+          "name": "BD_PER_DOC_NUM",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "BD_PER_START_DT": {
+          "name": "BD_PER_START_DT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "BD_PER_END_DT": {
+          "name": "BD_PER_END_DT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "BD_PER_ADD_LOCAL": {
+          "name": "BD_PER_ADD_LOCAL",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ADDRESS UNKNOWN'"
+        },
+        "BD_PER_ADD_STATE": {
+          "name": "BD_PER_ADD_STATE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ADDRESS UNKNOWN'"
+        },
+        "BD_PER_ADD_PCODE": {
+          "name": "BD_PER_ADD_PCODE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ADDRESS UNKNOWN'"
+        },
+        "BD_PER_ADD_COUNTRY": {
+          "name": "BD_PER_ADD_COUNTRY",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'AUSTRALIA'"
+        },
+        "BD_PER_COMMENTS": {
+          "name": "BD_PER_COMMENTS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CREATED_AT": {
+          "name": "CREATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "UPDATED_AT": {
+          "name": "UPDATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.credit_licensees": {
+      "name": "credit_licensees",
+      "schema": "",
+      "columns": {
+        "REGISTER_NAME": {
+          "name": "REGISTER_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CRED_LIC_NUM": {
+          "name": "CRED_LIC_NUM",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CRED_LIC_NAME": {
+          "name": "CRED_LIC_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CRED_LIC_START_DT": {
+          "name": "CRED_LIC_START_DT",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_END_DT": {
+          "name": "CRED_LIC_END_DT",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_STATUS": {
+          "name": "CRED_LIC_STATUS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_ABN_ACN": {
+          "name": "CRED_LIC_ABN_ACN",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_AFSL_NUM": {
+          "name": "CRED_LIC_AFSL_NUM",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_STATUS_HISTORY": {
+          "name": "CRED_LIC_STATUS_HISTORY",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_LOCALITY": {
+          "name": "CRED_LIC_LOCALITY",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_STATE": {
+          "name": "CRED_LIC_STATE",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_PCODE": {
+          "name": "CRED_LIC_PCODE",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_LAT": {
+          "name": "CRED_LIC_LAT",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_LNG": {
+          "name": "CRED_LIC_LNG",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_EDRS": {
+          "name": "CRED_LIC_EDRS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_BN": {
+          "name": "CRED_LIC_BN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_LIC_AUTHORISATIONS": {
+          "name": "CRED_LIC_AUTHORISATIONS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CREATED_AT": {
+          "name": "CREATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "UPDATED_AT": {
+          "name": "UPDATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.credit_representatives": {
+      "name": "credit_representatives",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "REGISTER_NAME": {
+          "name": "REGISTER_NAME",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CRED_REP_NUM": {
+          "name": "CRED_REP_NUM",
+          "type": "numeric(9, 0)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CRED_LIC_NUM": {
+          "name": "CRED_LIC_NUM",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CRED_REP_NAME": {
+          "name": "CRED_REP_NAME",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CRED_REP_ABN_ACN": {
+          "name": "CRED_REP_ABN_ACN",
+          "type": "numeric(11, 0)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_REP_START_DT": {
+          "name": "CRED_REP_START_DT",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "CRED_REP_END_DT": {
+          "name": "CRED_REP_END_DT",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_REP_LOCALITY": {
+          "name": "CRED_REP_LOCALITY",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_REP_STATE": {
+          "name": "CRED_REP_STATE",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_REP_PCODE": {
+          "name": "CRED_REP_PCODE",
+          "type": "numeric(4, 0)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_REP_EDRS": {
+          "name": "CRED_REP_EDRS",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_REP_AUTHORISATIONS": {
+          "name": "CRED_REP_AUTHORISATIONS",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CRED_REP_CROSS_ENDORSE": {
+          "name": "CRED_REP_CROSS_ENDORSE",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CREATED_AT": {
+          "name": "CREATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "UPDATED_AT": {
+          "name": "UPDATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.financial_adviser_afs_reps": {
+      "name": "financial_adviser_afs_reps",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ADV_NUMBER": {
+          "name": "ADV_NUMBER",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "AFS_LIC_NUM": {
+          "name": "AFS_LIC_NUM",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "AFS_REP_NUM": {
+          "name": "AFS_REP_NUM",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.financial_advisers": {
+      "name": "financial_advisers",
+      "schema": "",
+      "columns": {
+        "REGISTER_NAME": {
+          "name": "REGISTER_NAME",
+          "type": "varchar(250)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ADV_NAME": {
+          "name": "ADV_NAME",
+          "type": "varchar(250)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ADV_NUMBER": {
+          "name": "ADV_NUMBER",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ADV_ROLE": {
+          "name": "ADV_ROLE",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ADV_SUB_TYPE": {
+          "name": "ADV_SUB_TYPE",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ADV_ROLE_STATUS": {
+          "name": "ADV_ROLE_STATUS",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ADV_ABN": {
+          "name": "ADV_ABN",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ADV_FIRST_PROVIDED_ADVICE": {
+          "name": "ADV_FIRST_PROVIDED_ADVICE",
+          "type": "varchar(4)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "LICENCE_NAME": {
+          "name": "LICENCE_NAME",
+          "type": "varchar(250)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "LICENCE_NUMBER": {
+          "name": "LICENCE_NUMBER",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "LICENCE_ABN": {
+          "name": "LICENCE_ABN",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "LICENCE_CONTROLLED_BY": {
+          "name": "LICENCE_CONTROLLED_BY",
+          "type": "varchar(4000)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "REP_APPOINTED_BY": {
+          "name": "REP_APPOINTED_BY",
+          "type": "varchar(250)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "REP_APPOINTED_NUM": {
+          "name": "REP_APPOINTED_NUM",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "REP_APPOINTED_ABN": {
+          "name": "REP_APPOINTED_ABN",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ADV_START_DT": {
+          "name": "ADV_START_DT",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ADV_END_DT": {
+          "name": "ADV_END_DT",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ADV_DA_START_DT": {
+          "name": "ADV_DA_START_DT",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ADV_DA_END_DT": {
+          "name": "ADV_DA_END_DT",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ADV_DA_TYPE": {
+          "name": "ADV_DA_TYPE",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.financial_services_representatives": {
+      "name": "financial_services_representatives",
+      "schema": "",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "REGISTER_NAME": {
+          "name": "REGISTER_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_NUM": {
+          "name": "AFS_REP_NUM",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "AFS_LIC_NUM": {
+          "name": "AFS_LIC_NUM",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_NAME": {
+          "name": "AFS_REP_NAME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_ABN": {
+          "name": "AFS_REP_ABN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_ACN": {
+          "name": "AFS_REP_ACN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_OTHER_ROLE": {
+          "name": "AFS_REP_OTHER_ROLE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_START_DT": {
+          "name": "AFS_REP_START_DT",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_STATUS": {
+          "name": "AFS_REP_STATUS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_END_DT": {
+          "name": "AFS_REP_END_DT",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_ADD_LOCAL": {
+          "name": "AFS_REP_ADD_LOCAL",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_ADD_STATE": {
+          "name": "AFS_REP_ADD_STATE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_ADD_PCO": {
+          "name": "AFS_REP_ADD_PCO",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_ADD_COUNTRY": {
+          "name": "AFS_REP_ADD_COUNTRY",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_CROSS_ENDORSE": {
+          "name": "AFS_REP_CROSS_ENDORSE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_MAY_APPOINT": {
+          "name": "AFS_REP_MAY_APPOINT",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_APPOINTED_BY": {
+          "name": "AFS_REP_APPOINTED_BY",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "FIN": {
+          "name": "FIN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "DEAL": {
+          "name": "DEAL",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "APPLY": {
+          "name": "APPLY",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "GENFIN": {
+          "name": "GENFIN",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ISSUE": {
+          "name": "ISSUE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ARRANGE_APPLY": {
+          "name": "ARRANGE_APPLY",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ARRANGE_ISSUE": {
+          "name": "ARRANGE_ISSUE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ARRANGE_UNDERWR": {
+          "name": "ARRANGE_UNDERWR",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CLASSES": {
+          "name": "CLASSES",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "DEAL_APPLY": {
+          "name": "DEAL_APPLY",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "DEAL_ISSUE": {
+          "name": "DEAL_ISSUE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "DEAL_UNDERWR": {
+          "name": "DEAL_UNDERWR",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "IDPS": {
+          "name": "IDPS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "MARKET": {
+          "name": "MARKET",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "NONIDPS": {
+          "name": "NONIDPS",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "SCHEME": {
+          "name": "SCHEME",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "TRUSTEE": {
+          "name": "TRUSTEE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "WSALE": {
+          "name": "WSALE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ARRANGE": {
+          "name": "ARRANGE",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "UNDERWR": {
+          "name": "UNDERWR",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_SAME_AU": {
+          "name": "AFS_REP_SAME_AU",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "AFS_REP_RELATED": {
+          "name": "AFS_REP_RELATED",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.function_logs": {
+      "name": "function_logs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "function_name": {
+          "name": "function_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "records_processed": {
+          "name": "records_processed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_message": {
+          "name": "error_message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "duration_ms": {
+          "name": "duration_ms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.representative_relationships": {
+      "name": "representative_relationships",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "REP_ID": {
+          "name": "REP_ID",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "AFS_REP_NUM": {
+          "name": "AFS_REP_NUM",
+          "type": "varchar(9)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "AFS_LIC_NUM": {
+          "name": "AFS_LIC_NUM",
+          "type": "varchar(9)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ADVISER_NUMBER": {
+          "name": "ADVISER_NUMBER",
+          "type": "varchar(9)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CREATED_AT": {
+          "name": "CREATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "UPDATED_AT": {
+          "name": "UPDATED_AT",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subscription_status": {
+          "name": "subscription_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subscription_end_date": {
+          "name": "subscription_end_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stripe_customer_id": {
+          "name": "stripe_customer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stripe_session_id": {
+          "name": "stripe_session_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "auth_user_id": {
+          "name": "auth_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.stripe_webhooks": {
+      "name": "stripe_webhooks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "session_id": {
+          "name": "session_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "processed_at": {
+          "name": "processed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
