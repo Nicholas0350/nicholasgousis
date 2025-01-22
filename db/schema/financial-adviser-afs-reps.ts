@@ -2,6 +2,7 @@ import { pgTable, text, integer } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { financialAdvisers } from './financial-advisers'
 import { financialServicesRepresentatives } from './financial-services'
+import { afsLicensees } from './afs-licensees'
 
 export const financialAdviserAfsReps = pgTable('financial_adviser_afs_reps', {
   id: integer('id').notNull(),
@@ -18,5 +19,9 @@ export const financialAdviserAfsRepsRelations = relations(financialAdviserAfsRep
   representative: one(financialServicesRepresentatives, {
     fields: [financialAdviserAfsReps.afsRepNum],
     references: [financialServicesRepresentatives.afsRepNum],
+  }),
+  licensee: one(afsLicensees, {
+    fields: [financialAdviserAfsReps.afsLicNum],
+    references: [afsLicensees.afsLicNum],
   })
 }))

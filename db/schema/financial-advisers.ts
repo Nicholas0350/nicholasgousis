@@ -1,4 +1,7 @@
 import { pgTable, varchar } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
+import { afsLicensees } from './afs-licensees'
+import { financialAdviserAfsReps } from './financial-adviser-afs-reps'
 
 export const financialAdvisers = pgTable('financial_advisers', {
   registerName: varchar('REGISTER_NAME', { length: 250 }).notNull(),
@@ -22,3 +25,11 @@ export const financialAdvisers = pgTable('financial_advisers', {
   advDaEndDt: varchar('ADV_DA_END_DT', { length: 10 }),
   advDaType: varchar('ADV_DA_TYPE', { length: 100 })
 })
+
+export const financialAdvisersRelations = relations(financialAdvisers, ({ one, many }) => ({
+  licensee: one(afsLicensees, {
+    fields: [financialAdvisers.licenceNumber],
+    references: [afsLicensees.afsLicNum],
+  }),
+  afsReps: many(financialAdviserAfsReps)
+}))

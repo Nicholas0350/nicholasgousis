@@ -1,98 +1,116 @@
-Prompr: for codebase were adding an analytics feature to admin dashboard so  lets start with enhancing @analytics-overview.md by looking at @schema and add the appropraite attributess.  when providing analytics Keep in mind the joins that is financial advisers have many financial adviser afs reps &
+# Complimet Analytics Overview
 
-
-Complimet Analytics tracks upwards of **xxx**, which translates to roughly **xxx**.
+Complimet Analytics tracks upwards of **1 million regulatory events**, which translates to roughly **100,000 monthly compliance checks**.
 
 With the sheer volume of data that's tracked, it is important to be able to easily filter and create reports to help ASIC Regulated Companies make informed decisions.
-
-Complimet Analytics guide to get the most out of your click events and engagement data.
 
 ## Analytics Views
 
 Complimet's Analytics dashboard consists of the following:
 
-1.  Time-series analytics chart
-2.  Aggregated data for different facets (top views)
+1. Time-series analytics chart
+2. Aggregated data for different facets (top views)
+3. Real-time events stream
 
+### 1. Time-series Analytics Chart
 
-### 1\. Time-series analytics chart
+This is the default view showing regulatory events over time. Available metrics include:
 
-This is the default view and shows you the number of xxx events over time.
+- Daily/Monthly new banned persons registrations
+- AFS License status changes over time
+- Credit Representative appointments/terminations timeline
+- Financial Adviser role status changes
+- License expiry tracking (both AFS and Credit)
 
-Time-series line chart
+The time-series chart allows you to track trends and identify patterns in regulatory changes.
 
-### 2\. Aggregated data for different facets (top views)
+### 2. Aggregated Data Facets
 
-Complimet Analytics. These views show you the xxx, xxx, and more.
+Complimet Analytics provides deep insights through multiple facets:
 
-Aggregated data for different facets of an ASIC Licence
+**Banned Person Categories:**
+- Distribution by type (AFS, Credit, Director, SMSF)
+- Geographic distribution of banned persons
+- Active vs Expired ban statistics
+- Historical relationship analysis
 
-### 3\. xxx events stream
+**AFS License Analytics:**
+- Total active licensees count
+- Representatives per licensee ratios
+- License status distribution
+- Geographic concentration of licenses
+- Service types breakdown
 
-Complimet also offers a Real-time Events Stream view that shows you the events that are happening in real-time. These events are sorted by the time they occurred, so you can see the most recent events first.
+**Credit Representatives Overview:**
+- Representatives per licensee metrics
+- EDRS (External Dispute Resolution Scheme) distribution
+- Authorization types analysis
+- State/locality concentration
+- Cross-endorsement patterns
 
-The Events Stream dashboard on Complimet
+**Financial Advisers Insights:**
+- Advisers per AFS license statistics
+- Role type distribution analysis
+- Sub-type categorization
+- First advice provision trends
+- Appointment chain analysis
 
-The real-time events stream lives in your workspace's **Events** tab, but you can also access it via the **View Events** button in the Analytics tab:
+**Cross-Entity Relationships:**
+- Multi-licensed representatives tracking
+- Banned persons with multiple past roles
+- Cross-endorsement pattern analysis
+- Representative appointment chains
+- Risk pattern identification
 
-Quick link to open-up the events stream from the Analytics tab
+### 3. Real-time Events Stream
 
-When you click on the **View Events** button, the same filters you have applied in the Analytics tab are applied to the Events tab as well.
+Complimet offers real-time monitoring of regulatory events:
+- License status changes
+- New representative appointments
+- Ban registrations
+- Role status updates
+- Relationship modifications
+
+The Events Stream dashboard shows these events in real-time, sorted by occurrence time.
 
 ## Date Range Picker
 
-Complimet Analytics comes with a powerful date range picker that allows you to select custom date ranges for your reports.
+Complimet Analytics includes a powerful date range picker with keyboard shortcuts:
+- `M` – Last 30 days
+- `T` – Last 90 days
+- `Y` – Year to date
+- `L` – Last 12 months
+- `A` – All time
 
-This is especially useful when you want to compare data over different time periods, or when you want to focus on a specific time frame that is not covered by the preset date ranges.
+## Filtering Data
 
-New Date Range Picker for custom date ranges
+The analytics dashboard provides schema-based filters:
 
-Pro-tip: You can use keyboard shortcuts to toggle between different preset date ranges:
+- **Entity Type** – Filter by AFS Licensee, Credit Licensee, Financial Adviser, etc.
+- **Status** – Filter by active, suspended, banned, or expired
+- **Location** – Filter by state, locality, or postcode
+- **Relationship Type** – Filter by direct appointments, cross-endorsements
+- **Date Range** – Filter by registration dates, ban periods, or appointment durations
+- **Authorization Types** – Filter by specific authorizations or endorsements
+- **EDRS Types** – Filter by dispute resolution scheme types
 
+## Exporting Analytics Data
 
+Export options include:
+- Full dataset exports
+- Filtered view exports
+- Custom report generation
+- Relationship mapping exports
 
--   `M` – Last 30 days
--   `T` – Last 90 days
--   `Y` – Year to date
--   `L` – Last 12 months
--   `A` – All time
+## "Ask AI" Feature
 
-## Filtering data
-
-Complimet's Analytics dashboard comes with a sleek and keyboard-friendly filter bar at the top of the dashboard that you can use to filter your data.
-
-
-
-Here are some of the new filter facets you can use:
-
--   **Domain** – Filter by xxx (e.g. )
--   **Enter Attributes** – Filter by xxx (e.g. Social Media, Email Campaign, Blog Post)
--   **Enter Attributes** – Filter by xxx trigger (e.g. link click, QR code scan)
--   **Enter Attributes** – Filter by xxx type (e.g. Mobile, Desktop, Tablet)
--   **Enter Attributes** – Filter by xxx (e.g. United States, India, Germany)
--   **Enter Attributes** – Filter by xxx (e.g. San Francisco, New York, London)
--   **Enter Attributes** – Filter by xxx (e.g. California, New York, London)
--   **Enter Attributes** – Filter by xxx (e.g. North America, Europe, Asia)
--   **Enter Attributes** – Filter by xxx (e.g. Chrome, Safari, Firefox)
--   **Enter Attributes** – Filter by xxx system (e.g. iOS, Android, Windows)
--   **Enter Attributes** – Filter by xxx (e.g. Direct, Google, Facebook)
-
-
-
-## Exporting your analytics data
-
-You can also export your analytics data or events stream data to a CSV file at any time. This can be useful if you want to analyze the data in a business intelligence (BI) tool, share it with your team, or import it into a spreadsheet.
-
-Click on the download icon to export the data
-
-## Bonus: "Ask AI" feature
-
- "Ask AI" is a feature to query your analytics with natural language.
+"Ask AI" is a feature to query your analytics with natural language.
 
 For example, you can ask questions like:
 
--   " "
--   ""
--   ""
-
-Complimet AI automatically selects the right filters and generates a report for you.
+Natural language queries supported:
+- "Show me all banned persons who were previously AFS representatives"
+- "List credit representatives with multiple licensee relationships"
+- "Graph the trend of financial adviser appointments in the last 12 months"
+- "Compare EDRS distribution across states"
+- "Identify licensees with the most representative terminations"

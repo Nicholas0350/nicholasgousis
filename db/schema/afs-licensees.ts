@@ -1,6 +1,7 @@
 import { pgTable, text, date, integer, timestamp } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { financialServicesRepresentatives } from './financial-services'
+import { financialAdvisers } from './financial-advisers'
 
 export const afsLicensees = pgTable('afs_licensees', {
   id: integer('id').primaryKey(),
@@ -25,5 +26,6 @@ export const afsLicensees = pgTable('afs_licensees', {
 })
 
 export const afsLicenseesRelations = relations(afsLicensees, ({ many }) => ({
-  representatives: many(financialServicesRepresentatives)
+  representatives: many(financialServicesRepresentatives),
+  advisers: many(financialAdvisers)
 }))
