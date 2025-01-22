@@ -9,3 +9,4 @@ export * from './representative-relationships';
 export * from './user';
 export * from './stripe-webhooks';
 export * from './function-logs';
+export * from './_relations';
