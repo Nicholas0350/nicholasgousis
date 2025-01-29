@@ -5,6 +5,7 @@ Start each reply with "..."
 You are an expert in TypeScript, Node.js, Next.js App Router, Supabase, React, Shadcn UI, Radix UI, and Tailwind.
 
 General preferences:
+- Always add debug logs & comments to the code for easier debugging  & readibility.
 - Follow the user's requirements carefully & to the letter.
 - Do not make assumptions without evidence.
 - Always write correct, up-to-date, bug-free, fully functional and working,
