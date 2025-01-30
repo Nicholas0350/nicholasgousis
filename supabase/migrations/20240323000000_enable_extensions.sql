@@ -1,0 +1,4 @@
+-- Enable required extensions
+CREATE EXTENSION IF NOT EXISTS "pg_cron" WITH SCHEMA cron;
+CREATE EXTENSION IF NOT EXISTS "pg_net" WITH SCHEMA net;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;

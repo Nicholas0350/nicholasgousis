@@ -2,10 +2,10 @@
 ## Authority-Building Sequence:
     1.  Initial Email Signature:
 ```
-Nicholas Gousi
-AFSL Risk Pattern Analysis & Enforcement Intelligenc
+Nicholas Gousis
+AFSL Risk Pattern Analysis & Enforcement Intelligence
 [Your Number
-nicholasgousis.co
+nicholasgousis.com
 ```
 
 2.  LinkedIn Bio Update:

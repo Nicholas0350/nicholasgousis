@@ -1,0 +1,23 @@
+-- Schedule dataset change detection to run every hour
+select cron.schedule(
+  'check-dataset-changes',
+  '0 * * * *',  -- Every hour
+  $$
+  select net.http_post(
+    url := 'https://chybymkpkirlyskmmxaf.supabase.co/functions/v1/check-dataset-changes',
+    headers := '{"Content-Type": "application/json", "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoeWJ5bWtwa2lybHlza21teGFmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxNTQxOTM3NywiZXhwIjoyMDMwOTk1Mzc3fQ._X1ldeh1SHu_besmPY6tbVPckVanZA9-ox-UBAJxpCk"}'::jsonb
+  ) as request_id;
+  $$
+);
+
+-- Schedule full data sync to run on 1st and 15th of each month
+select cron.schedule(
+  'full-data-sync',
+  '0 0 1,15 * *',  -- At midnight on 1st and 15th of each month
+  $$
+  select net.http_post(
+    url := 'https://chybymkpkirlyskmmxaf.supabase.co/functions/v1/fetch-all-data',
+    headers := '{"Content-Type": "application/json", "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoeWJ5bWtwa2lybHlza21teGFmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxNTQxOTM3NywiZXhwIjoyMDMwOTk1Mzc3fQ._X1ldeh1SHu_besmPY6tbVPckVanZA9-ox-UBAJxpCk"}'::jsonb
+  ) as request_id;
+  $$
+);

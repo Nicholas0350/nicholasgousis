@@ -1,5 +1,8 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { createBrowserClient } from '@supabase/ssr'
+import { WebhookManagement } from './components/webhook-management'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card } from '@/components/ui/card'
 import { DataTable } from '@/components/ui/data-table'
@@ -8,8 +11,17 @@ import { columns } from './columns'
 import ContentAnalytics from './components/content-analytics'
 import LicenseeImpact from './components/licensee-impact'
 import ArticleDrafts from './components/article-drafts'
+import { User } from '@supabase/supabase-js'
 
-export default function AdminDashboardPage() {
+export default function AdminDashboard() {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
   const { data: mediaReleases, isLoading: mediaLoading } = useQuery({
     queryKey: ['mediaReleases'],
     queryFn: async () => {
@@ -26,9 +38,69 @@ export default function AdminDashboardPage() {
     },
   })
 
+  useEffect(() => {
+    async function checkUser() {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser()
+
+        if (error || !user) {
+          console.error('Not authenticated:', error)
+          window.location.href = '/login'
+          return
+        }
+
+        // Check if user is admin
+        const { data: adminData, error: adminError } = await supabase
+          .from('users')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single()
+
+        if (adminError || !adminData?.is_admin) {
+          console.error('Not authorized:', adminError)
+          window.location.href = '/dashboard'
+          return
+        }
+
+        setUser(user)
+      } catch (error) {
+        console.error('Error checking user:', error)
+        window.location.href = '/login'
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkUser()
+  }, [supabase.auth])
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
+
+      <Tabs defaultValue="webhooks">
+        <TabsList>
+          <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="webhooks" className="mt-6">
+          <WebhookManagement />
+        </TabsContent>
+
+        <TabsContent value="users">
+          {/* User management component will go here */}
+        </TabsContent>
+
+        <TabsContent value="settings">
+          {/* Settings component will go here */}
+        </TabsContent>
+      </Tabs>
 
       <Tabs defaultValue="content" className="space-y-4">
         <TabsList>
@@ -37,7 +109,6 @@ export default function AdminDashboardPage() {
           <TabsTrigger value="licensees">Licensee Impact</TabsTrigger>
           <TabsTrigger value="drafts">Article Drafts</TabsTrigger>
         </TabsList>
-
 
         {/* New Entrants */}
         <TabsContent value="content">
@@ -76,7 +147,6 @@ export default function AdminDashboardPage() {
         <TabsContent value="licensees">
           <LicenseeImpact />
         </TabsContent>
-
 
         {/* Regulatory Releases */}
         <TabsContent value="drafts">

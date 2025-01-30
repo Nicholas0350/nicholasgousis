@@ -1,4 +1,4 @@
-import { pgTable, varchar } from 'drizzle-orm/pg-core'
+import { pgTable, varchar, timestamp } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { afsLicensees } from './afs-licensees'
 import { financialAdviserAfsReps } from './financial-adviser-afs-reps'
@@ -23,7 +23,59 @@ export const financialAdvisers = pgTable('financial_advisers', {
   advEndDt: varchar('ADV_END_DT', { length: 10 }),
   advDaStartDt: varchar('ADV_DA_START_DT', { length: 10 }),
   advDaEndDt: varchar('ADV_DA_END_DT', { length: 10 }),
-  advDaType: varchar('ADV_DA_TYPE', { length: 100 })
+  advDaType: varchar('ADV_DA_TYPE', { length: 100 }),
+  advDaDescription: varchar('ADV_DA_DESCRIPTION', { length: 4000 }),
+  overallRegistration: varchar('OVERALL_REGISTRATION', { length: 100 }),
+  registrationStatus: varchar('REGISTRATION_STATUS', { length: 100 }),
+  registrationEndDt: varchar('REGISTRATION_END_DT', { length: 10 }),
+  // Financial product authorizations
+  finCarbunit: varchar('FIN_CARBUNIT', { length: 4 }),
+  finDeppayDpno: varchar('FIN_DEPPAY_DPNO', { length: 4 }),
+  finDeriv: varchar('FIN_DERIV', { length: 4 }),
+  finDerivDerwo: varchar('FIN_DERIV_DERWO', { length: 4 }),
+  finDerivDerelec: varchar('FIN_DERIV_DERELEC', { length: 4 }),
+  finDerivDergra: varchar('FIN_DERIV_DERGRA', { length: 4 }),
+  finForexch: varchar('FIN_FOREXCH', { length: 4 }),
+  finGovdeb: varchar('FIN_GOVDEB', { length: 4 }),
+  finLifeprodLifei: varchar('FIN_LIFEPROD_LIFEI', { length: 4 }),
+  finLifeprodLife: varchar('FIN_LIFEPROD_LIFE', { length: 4 }),
+  finMinvMiexcl: varchar('FIN_MINV_MIEXCL', { length: 4 }),
+  finMinvMiinclu: varchar('FIN_MINV_MIINCLU', { length: 4 }),
+  finMinvMiidpso: varchar('FIN_MINV_MIIDPSO', { length: 4 }),
+  finMinvMiown: varchar('FIN_MINV_MIOWN', { length: 4 }),
+  finMinvMihorse: varchar('FIN_MINV_MIHORSE', { length: 4 }),
+  finMinvMitime: varchar('FIN_MINV_MITIME', { length: 4 }),
+  finMinvImis: varchar('FIN_MINV_IMIS', { length: 4 }),
+  finRsa: varchar('FIN_RSA', { length: 4 }),
+  finSecur: varchar('FIN_SECUR', { length: 4 }),
+  finSuper: varchar('FIN_SUPER', { length: 4 }),
+  finSuperSmsuper: varchar('FIN_SUPER_SMSUPER', { length: 4 }),
+  finSuperSuperh: varchar('FIN_SUPER_SUPERH', { length: 4 }),
+  finStdmarglend: varchar('FIN_STDMARGLEND', { length: 4 }),
+  finNonstdmarg: varchar('FIN_NONSTDMARG', { length: 4 }),
+  finAuscarbcrdu: varchar('FIN_AUSCARBCRDU', { length: 4 }),
+  finEligintremsu: varchar('FIN_ELIGINTREMSU', { length: 4 }),
+  finMisfinMismda: varchar('FIN_MISFIN_MISMDA', { length: 4 }),
+  finMisfinMisfin: varchar('FIN_MISFIN_MISFIN', { length: 4 }),
+  finMisfinMisfinip: varchar('FIN_MISFIN_MISFINIP', { length: 4 }),
+  finFhsanonadid: varchar('FIN_FHSANONADID', { length: 4 }),
+  // Classes
+  classesSecur: varchar('CLASSES_SECUR', { length: 4000 }),
+  classesSmis: varchar('CLASSES_SMIS', { length: 4000 }),
+  classesLifeprod: varchar('CLASSES_LIFEPROD', { length: 4000 }),
+  classesSuper: varchar('CLASSES_SUPER', { length: 4000 }),
+  // Additional fields
+  advCpdFailure: varchar('ADV_CPD_FAILURE', { length: 4000 }),
+  qualificationsA: varchar('QUALIFICATIONS_A', { length: 4000 }),
+  memberships: varchar('MEMBERSHIPS', { length: 4000 }),
+  furtherRestrict: varchar('FURTHER_RESTRICT', { length: 4000 }),
+  ableToProvide: varchar('ABLE_TO_PROVIDE', { length: 4000 }),
+  advAddLocal: varchar('ADV_ADD_LOCAL', { length: 250 }),
+  advAddState: varchar('ADV_ADD_STATE', { length: 10 }),
+  advAddPcode: varchar('ADV_ADD_PCODE', { length: 10 }),
+  advAddCountry: varchar('ADV_ADD_COUNTRY', { length: 100 }),
+  createdAt: timestamp('CREATED_AT').defaultNow(),
+  updatedAt: timestamp('UPDATED_AT').defaultNow()
 })
 
 export const financialAdvisersRelations = relations(financialAdvisers, ({ one, many }) => ({
