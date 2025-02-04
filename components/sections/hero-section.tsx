@@ -47,7 +47,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex justify-center"
         >
-          <StrategyCallButton onClick={() => window.location.href = '#contact'} />
+          {/* <StrategyCallButton onClick={() => window.location.href = '#contact'} /> */}
         </motion.div>
       </div>
     </section>

@@ -1,6 +1,11 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import Image from "next/image"
 import { spaceGrotesk } from "@/lib/fonts"
+// import { Button } from "@/components/ui/button"
+// import { CheckCircle } from "lucide-react"
+// import { Card, CardContent } from "@/components/ui/card"
+import { DemoModal } from "@/components/sign-ups/newsletter-modal-signup/main"
+
 
 interface ArticleModalProps {
   isOpen: boolean
@@ -11,6 +16,36 @@ interface ArticleModalProps {
     date: string
   } | null
 }
+
+interface PlanOption {
+  id: string;
+  name: string;
+  price: string;
+  description: string;
+  features: string[];
+}
+
+const plansSample: PlanOption[] = [
+  {
+      id: "basic",
+      name: "Basic",
+      price: "$9",
+      description: "Perfect for side projects",
+      features: ["5 projects", "Basic analytics", "24h support"],
+  },
+  {
+      id: "pro",
+      name: "Pro",
+      price: "$19",
+      description: "For professional developers",
+      features: [
+          "Unlimited projects",
+          "Advanced analytics",
+          "Priority support",
+      ],
+  },
+];
+
 
 export function ArticleModal({ isOpen, onClose, article }: ArticleModalProps) {
   if (!article) return null
@@ -46,6 +81,10 @@ export function ArticleModal({ isOpen, onClose, article }: ArticleModalProps) {
                   </p>
                 </div>
               </div>
+
+
+
+              Subscribe to the Newsletter<DemoModal plans={plansSample} />
             </div>
           </div>
         </div>
