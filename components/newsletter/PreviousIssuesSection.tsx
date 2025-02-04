@@ -6,7 +6,72 @@ import { ArticleModal } from "@/components/ArticleModal"
 // import NewsletterSignup from './newsletterForm';
 import { articles } from "@/data/newsletter/articles"
 import { spaceGrotesk } from "@/lib/fonts"
+import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 import {MorphingDialog, MorphingDialogTrigger, MorphingDialogContainer, MorphingDialogContent} from "@/components/ui/morphing-dialog"
+
+interface TilesProps {
+  className?: string
+  rows?: number
+  cols?: number
+  tileClassName?: string
+  tileSize?: "sm" | "md" | "lg"
+}
+
+const tileSizes = {
+  sm: "w-8 h-8",
+  md: "w-9 h-9 md:w-12 md:h-12",
+  lg: "w-12 h-12 md:w-16 md:h-16",
+}
+
+function Tiles({
+  className,
+  rows = 100,
+  cols = 10,
+  tileClassName,
+  tileSize = "md",
+}: TilesProps) {
+  const rowsArray = new Array(rows).fill(1)
+  const colsArray = new Array(cols).fill(1)
+
+  return (
+    <div
+      className={cn(
+        "relative z-0 flex w-full h-full justify-center",
+        className
+      )}
+    >
+      {rowsArray.map((_, i) => (
+        <motion.div
+          key={`row-${i}`}
+          className={cn(
+            tileSizes[tileSize],
+            "border-l dark:border-neutral-900 border-neutral-200 relative",
+            tileClassName
+          )}
+        >
+          {colsArray.map((_, j) => (
+            <motion.div
+              whileHover={{
+                backgroundColor: `var(--tile)`,
+                transition: { duration: 0 }
+              }}
+              animate={{
+                transition: { duration: 2 }
+              }}
+              key={`col-${j}`}
+              className={cn(
+                tileSizes[tileSize],
+                "border-r border-t dark:border-neutral-900 border-neutral-200 relative",
+                tileClassName
+              )}
+            />
+          ))}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
 
 export function PreviousIssuesSection() {
   const [selectedArticle, setSelectedArticle] = useState<{
@@ -17,9 +82,14 @@ export function PreviousIssuesSection() {
 
   return (
     <>
-      <section className="min-h-screen w-full flex items-center justify-center py-12 md:py-24 lg:py-32 relative">
+      <section className="pt-12 w-full flex items-center justify-center py-12 md:py-24 lg:py-32 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
-          <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02]" />
+          <Tiles
+            className="absolute inset-0 opacity-30 dark:opacity-20"
+            rows={50}
+            cols={50}
+            tileSize="sm"
+          />
         </div>
         <div className="container relative px-4 md:px-6">
           <h2 className={`${spaceGrotesk.className} text-6xl font-extrabold mb-16 text-center mx-auto max-w-5xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400`}>
