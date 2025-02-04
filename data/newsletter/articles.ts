@@ -14,5 +14,21 @@ export const articles: Article[] = [
     number: 51,
     title: "Mastering AFSL Compliance: A Complete Risk Management Framework",
     date: "November 24, 2024"
+  },
+  {
+    number: 50,
+    title: "The Importance of AFSL Compliance in ASIC's New Enforcement Strategy",
+    date: "November 17, 2024"
+  },
+  {
+    number: 49,
+    title: "The Importance of AFSL Compliance in ASIC's New Enforcement Strategy",
+    date: "November 17, 2024"
+  },
+
+  {
+    number: 48,
+    title: "The Importance of AFSL Compliance in ASIC's New Enforcement Strategy",
+    date: "November 17, 2024"
   }
 ];

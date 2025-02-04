@@ -1,6 +1,6 @@
 "use client"
 import { Badge } from "@/components/ui/badge"
-import NewsletterSignup from './newsletterForm';
+import NewsletterSignup from '@/components/forms/newsletterForm';
 import { motion } from 'framer-motion'
 
 interface HeroSectionProps {
@@ -10,7 +10,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ onSubscribe, isLoading }: HeroSectionProps) {
   return (
-    <section className="h-screen w-screen relative flex flex-col items-center justify-center bg-[#1a1a1a]">
+    <section className=" p-12 relative flex flex-col items-center justify-center bg-[#1a1a1a]">
       {/* Background with grid pattern and animated gradient overlay */}
       <div className="absolute inset-0 w-full h-full bg-grid-small-white/[0.18] [background-size:20px_20px]">
         <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/90 via-transparent to-[#1a1a1a]/120" />
@@ -55,6 +55,11 @@ export function HeroSection({ onSubscribe, isLoading }: HeroSectionProps) {
             className="w-full max-w-sm mx-auto"
           >
             <NewsletterSignup onSubmit={onSubscribe} isLoading={isLoading} />
+            <div className="flex pt-12 justify-center">
+              <p className="text-white/50 text-lg">
+                Checkout our sample below
+              </p>
+            </div>
           </motion.div>
         </motion.div>
       </div>
