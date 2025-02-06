@@ -1,0 +1,55 @@
+;;
+;; Domain:     nicholasgousis.com.
+;; Exported:   2025-01-31 12:15:44
+;;
+;; This file is intended for use for informational and archival
+;; purposes ONLY and MUST be edited before use on a production
+;; DNS server.  In particular, you must:
+;;   -- update the SOA record with the correct authoritative name server
+;;   -- update the SOA record with the contact e-mail address information
+;;   -- update the NS record(s) with the authoritative name servers for this domain.
+;;
+;; For further information, please consult the BIND documentation
+;; located on the following website:
+;;
+;; http://www.isc.org/
+;;
+;; And RFC 1035:
+;;
+;; http://www.ietf.org/rfc/rfc1035.txt
+;;
+;; Please note that we do NOT offer technical support for any use
+;; of this zone data, the BIND name server, or any other third-party
+;; DNS software.
+;;
+;; Use at your own risk.
+;; SOA Record
+nicholasgousis.com	3600	IN	SOA	julissa.ns.cloudflare.com. dns.cloudflare.com. 2048999234 10000 2400 604800 3600
+
+;; NS Records
+nicholasgousis.com.	86400	IN	NS	julissa.ns.cloudflare.com.
+nicholasgousis.com.	86400	IN	NS	seamus.ns.cloudflare.com.
+
+;; A Records
+nicholasgousis.com.	1	IN	A	76.76.21.21 ; cf_tags=cf-proxied:false
+
+;; CAA Records
+nicholasgousis.com.	1	IN	CAA	0 issue "letsencrypt.org"
+
+;; CNAME Records
+mail.nicholasgousis.com.	1	IN	CNAME	custom.resend.com. ; cf_tags=cf-proxied:false
+www.nicholasgousis.com.	1	IN	CNAME	cname.vercel-dns.com. ; cf_tags=cf-proxied:false
+
+;; MX Records
+nicholasgousis.com.	1	IN	MX	10 feedback-smtp.us-east-1.amazonses.com.
+send.nicholasgousis.com.	1	IN	MX	10 feedback-smtp.us-east-1.amazonses.com.
+
+;; TXT Records
+_dmarc.mail.nicholasgousis.com.	1	IN	TXT	"v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s;"
+_dmarc.nicholasgousis.com.	1	IN	TXT	"v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s;"
+mail.nicholasgousis.com.	1	IN	TXT	"v=spf1 include:spf.resend.com -all"
+nicholasgousis.com.	1	IN	TXT	"v=spf1 include:amazonses.com -all"
+nicholasgousis.com.	1	IN	TXT	"google-site-verification=3m-OYQYfzrlDdRDIdkSzS-E2j27ltZENYp4llsVMOVo"
+resend._domainkey.mail.nicholasgousis.com.	1	IN	TXT	"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuTwRbCaHeCeTX6kF84Pgs+G6Dz2XJNausbo9cjJSZvS/8M0pwSNp9bmNeFgcPGYzyqDhLenRCiWjf9kzSHyVZgGcdkeP7FWA7FFI0qUUqn8dMNXVO+E7zTRhZkItcBZzk8FfyXtAe+4SQ2+HcpQFs5vBnWHQwPImTZOc2TY0zKQIDAQAB"
+resend._domainkey.nicholasgousis.com.	1	IN	TXT	"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuTwRbCaHeCeTX6kF84Pgs+G6Dz2XJNausbo9cjJSZvS/8M0pwSNp9bmNeFgcPGYzyqDhLenRCiWjf9kzSHyVZgGcdkeP7FWA7FFI0qUUqn8dMNXVO+E7zTRhZkItcBZzk8FfyXtAe+4SQ2+HcpQFs5vBnWHQwPImTZOc2TY0zKQIDAQAB"
+send.nicholasgousis.com.	1	IN	TXT	"v=spf1 include:amazonses.com -all"

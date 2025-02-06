@@ -15,8 +15,8 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public
 AS $$
 BEGIN
-  INSERT INTO public.user (
-    auth_user_id,
+  INSERT INTO public.profiles (
+    id,
     email,
     created_at,
     updated_at,
@@ -26,7 +26,7 @@ BEGIN
     new.email,
     new.created_at,
     new.created_at,
-    'pending'
+    'inactive'
   );
   RETURN new;
 END;
@@ -39,11 +39,11 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public
 AS $$
 BEGIN
-  UPDATE public.user
+  UPDATE public.profiles
   SET
     email = new.email,
     updated_at = now()
-  WHERE auth_user_id = new.id;
+  WHERE id = new.id;
   RETURN new;
 END;
 $$;
@@ -55,8 +55,8 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public
 AS $$
 BEGIN
-  DELETE FROM public.user
-  WHERE auth_user_id = old.id;
+  DELETE FROM public.profiles
+  WHERE id = old.id;
   RETURN old;
 END;
 $$;
@@ -77,14 +77,14 @@ CREATE TRIGGER on_auth_user_deleted
   FOR EACH ROW EXECUTE PROCEDURE public.handle_auth_user_delete();
 
 -- Add RLS policy for the user table
-ALTER TABLE public.user ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own data"
-ON public.user
+ON public.profiles
 FOR ALL
 TO authenticated
-USING (auth_user_id = auth.uid());
+USING (id = auth.uid());
 
 -- Grant necessary permissions
-GRANT ALL ON public.user TO postgres;
-GRANT ALL ON public.user TO service_role;
+GRANT ALL ON public.profiles TO postgres;
+GRANT ALL ON public.profiles TO service_role;

@@ -1,10 +1,9 @@
+import { NextResponse } from 'next/server';
+import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
-import { NextRequest } from 'next/server';
-import { Stripe } from 'stripe';
 import { Resend } from 'resend';
-import { supabaseAdmin } from '@/lib/supabase-admin';
 import { WelcomeEmail } from '@/emails/welcome';
-import crypto from 'crypto';
 
 // Check required environment variables
 if (!process.env.STRIPE_SECRET) {
@@ -23,114 +22,155 @@ if (!process.env.RESEND_FROM_EMAIL) {
   throw new Error('Missing RESEND_FROM_EMAIL');
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET as string, { apiVersion: '2024-11-20.acacia' });
-const resend = new Resend(process.env.RESEND_API_KEY as string);
-const fromEmail = process.env.RESEND_FROM_EMAIL as string;
+const stripe = new Stripe(process.env.STRIPE_SECRET!, {
+  apiVersion: '2024-11-20.acacia',
+});
 
-export async function POST(req: NextRequest) {
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const fromEmail = process.env.RESEND_FROM_EMAIL;
+
+export async function POST(req: Request) {
   const body = await req.text();
-  const signature = headers().get('stripe-signature') as string;
+  const signature = headers().get('stripe-signature');
 
   let event: Stripe.Event;
 
   try {
+    if (!signature) {
+      throw new Error('No signature found in request');
+    }
+
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET as string
+      process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (error) {
-    const err = error as Error;
-    console.error('Error verifying webhook signature:', err.message);
-    return new Response('Invalid signature', { status: 400 });
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err);
+    return new NextResponse(
+      JSON.stringify({ error: 'Webhook signature verification failed' }),
+      { status: 400 }
+    );
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const email = session.customer_email;
-    const customer_id = session.customer as string;
+  try {
+    console.log('Processing webhook event:', event.type);
 
-    if (!email) {
-      console.error('No email found in session:', JSON.stringify(session, null, 2));
-      return new Response('No email found in session', { status: 400 });
-    }
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
 
-    try {
-      // Check if user already exists
-      const { data: existingUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+        // Get subscription details
+        const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
 
-      if (listError) {
-        console.error('Error listing users:', listError);
-        return new Response('Error checking existing users', { status: 500 });
-      }
+        const userData = {
+          email: session.customer_email!,
+          stripe_customer_id: session.customer as string,
+          stripe_subscription_id: session.subscription as string,
+          subscription_status: subscription.status,
+          subscription_tier: 'tier_1',
+          subscription_end_date: new Date(subscription.current_period_end * 1000),
+          updated_at: new Date()
+        };
 
-      const existingUser = existingUsers.users.find(u => u.email === email);
+        // Check if user exists
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id, email, subscription_status')
+          .eq('email', userData.email)
+          .single();
 
-      if (!existingUser) {
-        console.log('Creating new user:', email);
-        // Create new user with random password and email confirmed
-        const password = crypto.randomBytes(32).toString('hex');
-        const { error: createUserError } = await supabaseAdmin.auth.admin.createUser({
-          email,
-          password,
-          email_confirm: true,
-          user_metadata: {
-            stripe_customer_id: customer_id,
-            subscription_status: 'active',
-            subscription_tier: 'tier_1',
-            created_at: new Date().toISOString()
+        if (existingProfile) {
+          // Update existing profile
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update(userData)
+            .eq('id', existingProfile.id);
+
+          if (updateError) throw updateError;
+
+          // Send welcome back email if resubscribing
+          if (existingProfile.subscription_status !== 'active') {
+            await resend.emails.send({
+              from: fromEmail,
+              to: userData.email,
+              subject: 'Welcome Back to Nicholas Gousis Financial Services!',
+              react: WelcomeEmail({ email: userData.email })
+            });
           }
-        });
+        } else {
+          // Create new profile
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              ...userData,
+              created_at: new Date()
+            });
 
-        if (createUserError) {
-          console.error('Error creating user:', createUserError);
-          return new Response('Error creating user', { status: 500 });
-        }
+          if (insertError) throw insertError;
 
-        console.log('Successfully created user:', email);
-
-        // Send welcome email
-        try {
+          // Send welcome email
           await resend.emails.send({
             from: fromEmail,
-            to: email,
+            to: userData.email,
             subject: 'Welcome to Nicholas Gousis Financial Services!',
-            react: WelcomeEmail({ email })
+            react: WelcomeEmail({ email: userData.email })
           });
-          console.log('Successfully sent welcome email to:', email);
-        } catch (emailError) {
-          const err = emailError as Error;
-          console.error('Error sending welcome email:', err.message);
-          // Don't fail the webhook if email fails
         }
-      } else {
-        console.log('Updating existing user:', email);
-        // Update existing user's metadata
-        const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
-          user_metadata: {
-            ...existingUser.user_metadata,
-            stripe_customer_id: customer_id,
-            subscription_status: 'active',
-            subscription_tier: 'tier_1',
-            updated_at: new Date().toISOString()
-          }
-        });
-
-        if (updateError) {
-          console.error('Error updating user:', updateError);
-          return new Response('Error updating user', { status: 500 });
-        }
-
-        console.log('Successfully updated user:', email);
+        break;
       }
 
-      return new Response(JSON.stringify({ received: true }), { status: 200 });
-    } catch (error) {
-      const err = error as Error;
-      console.error('Error processing webhook:', err.message);
-      return new Response('Error processing webhook', { status: 500 });
-    }
-  }
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object as Stripe.Subscription;
 
-  return new Response(JSON.stringify({ received: true }), { status: 200 });
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            subscription_status: subscription.status,
+            subscription_end_date: new Date(subscription.current_period_end * 1000),
+            updated_at: new Date()
+          })
+          .eq('stripe_subscription_id', subscription.id);
+
+        if (updateError) throw updateError;
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            subscription_status: 'canceled',
+            subscription_end_date: new Date(),
+            updated_at: new Date()
+          })
+          .eq('stripe_subscription_id', subscription.id);
+
+        if (updateError) throw updateError;
+        break;
+      }
+    }
+
+    return new NextResponse(
+      JSON.stringify({ success: true }),
+      { status: 200 }
+    );
+
+  } catch (error) {
+    console.error('Webhook processing failed:', error);
+    return new NextResponse(
+      JSON.stringify({
+        error: 'Webhook processing failed',
+        details: error instanceof Error ? error.message : String(error)
+      }),
+      { status: 500 }
+    );
+  }
 }

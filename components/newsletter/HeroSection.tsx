@@ -6,9 +6,10 @@ import { motion } from 'framer-motion'
 interface HeroSectionProps {
   onSubscribe: (email: string) => Promise<void>;
   isLoading: boolean;
+  error?: string | null;
 }
 
-export function HeroSection({ onSubscribe, isLoading }: HeroSectionProps) {
+export function HeroSection({ onSubscribe, isLoading, error }: HeroSectionProps) {
   return (
     <section className=" p-12 relative flex flex-col items-center justify-center bg-[#1a1a1a]">
       {/* Background with grid pattern and animated gradient overlay */}
@@ -54,7 +55,7 @@ export function HeroSection({ onSubscribe, isLoading }: HeroSectionProps) {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="w-full max-w-sm mx-auto"
           >
-            <NewsletterSignup onSubmit={onSubscribe} isLoading={isLoading} />
+            <NewsletterSignup onSubmit={onSubscribe} isLoading={isLoading} error={error} />
             <div className="flex pt-12 justify-center">
               <p className="text-white/50 text-lg">
                 Checkout our sample below

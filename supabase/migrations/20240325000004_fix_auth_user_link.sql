@@ -1,0 +1,2 @@
+-- This migration is no longer needed as we've moved to using profiles table
+-- and already set up auth user linking in previous migrations
